@@ -127,16 +127,49 @@ public class Chess {
 		
 	}
 	
-	public enum BitboardType {
-		WHITE,
-		BLACK,
-		PAWNS,
-		ROOKS,
-		KNIGHTS,
-		BISHOPS,
-		QUEENS,
-		KINGS,
-		EP
+	public static class Bitboard {
+		public static final int OCCUPIED = 0;
+		
+		/**
+		 * The number of squares to add to move in a direction
+		 * on the board.
+		 * 
+		 * @author Michael Aherne
+		 *
+		 */
+		public static class DirectionOffset {
+			public static final int SW = -9;
+			public static final int S  = -8;
+			public static final int SE = -7;
+			public static final int W  = -1;
+			public static final int E  = 1;
+			public static final int NW = 7;
+			public static final int N  = 8;
+			public static final int NE = 9;
+		}
+		
+		/**
+		 * Index into array of attack bitboards for each direction.
+		 * 
+		 * @author Michael Aherne
+		 *
+		 */
+		public static class DirectionIndex {
+			public static final int SW = 0;
+			public static final int S  = 1;
+			public static final int SE = 2;
+			public static final int W  = 3;
+			public static final int E  = 4;
+			public static final int NW = 5;
+			public static final int N  = 6;
+			public static final int NE = 7;
+		}
+		
+		public static final long FILE_A = 72340172838076673L;
+		public static final long FILE_H = -9187201950435737472L;
+		public static final long RANK_1 = 255L;
+		public static final long RANK_8 = -72057594037927936L;
+		
 	}
 	
 	public static enum NotationType {

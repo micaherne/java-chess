@@ -29,9 +29,25 @@ public class Position {
 	
 	public Position() {
 		board = new int[64];
-		pieceBitboards = new long[6];
+		pieceBitboards = new long[7];
 		colourBitboards = new long[2];
 		castling = new boolean[][]{{false, false}, {false, false}};
+	}
+	
+	public void initialisePieceBitboards() {
+		colourBitboards[0] = 0L;
+		colourBitboards[1] = 0L;
+		for (int i = 0; i < 7; i++) {
+			pieceBitboards[i] = 0L;
+		}
+		for (int i = 0; i < 64; i++) {
+			if (board[i] == Chess.Piece.EMPTY) {
+				continue;
+			}
+			pieceBitboards[board[i] & 7] |= (1L << i);
+			pieceBitboards[Chess.Bitboard.OCCUPIED] |= (1L << i);
+			colourBitboards[(board[i] >> 3) & 1] |= (1L << i);
+		}
 	}
 	
 	public static Position fromFEN(String fen) throws NotationException {
@@ -121,6 +137,25 @@ public class Position {
 			builder.append("\n+-+-+-+-+-+-+-+-+\n");
 		}
 		return builder.toString();
+	}
+
+	public void move(int move) {
+		// TODO: Undo stack
+		int fromSquare = MoveUtils.fromSquare(move);
+		int toSquare = MoveUtils.toSquare(move);
+		if (MoveUtils.isQueening(move)) {
+			board[toSquare] = MoveUtils.promotedPiece(move);
+		} else {
+			board[toSquare] = board[fromSquare];
+		}
+		board[fromSquare] = Chess.Piece.EMPTY;
+		if (MoveUtils.isEnPassentCapture(move)) {
+			if (toSquare > fromSquare) {
+				board[toSquare -  8] = Chess.Piece.EMPTY;
+			} else {
+				board[toSquare + 8] = Chess.Piece.EMPTY;
+			}
+		}
 	}
 
 }

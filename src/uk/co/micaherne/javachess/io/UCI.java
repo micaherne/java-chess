@@ -6,9 +6,11 @@ import java.io.InputStreamReader;
 
 import uk.co.micaherne.javachess.Chess;
 import uk.co.micaherne.javachess.FENException;
+import uk.co.micaherne.javachess.MoveUtils;
 import uk.co.micaherne.javachess.NotationException;
 import uk.co.micaherne.javachess.Position;
 import uk.co.micaherne.javachess.notation.AlgebraicNotation;
+import uk.co.micaherne.javachess.notation.LongAlgebraicNotation;
 
 public class UCI {
 
@@ -30,13 +32,13 @@ public class UCI {
 	
 	BufferedReader in;
 	private Position currentPosition;
-	private AlgebraicNotation notation;
+	private LongAlgebraicNotation notation;
 
 
 	public UCI() {
 		super();
 		in = new BufferedReader(new InputStreamReader(System.in));
-		notation = new AlgebraicNotation();
+		notation = new LongAlgebraicNotation();
 	}
 
 
@@ -125,7 +127,8 @@ public class UCI {
 				currentPosition = Position.fromFEN(Chess.START_POS_FEN);
 				if(tokens.length > 3 && "moves".equals(tokens[2])){
 					for(int i = 3; i < tokens.length; i++) {
-						// currentPosition.move(tokens[i], Chess.NotationType.LONG_ALGEBRAIC);
+						int move = notation.parseMove(tokens[i]);
+						currentPosition.move(move);
 					}
 				}
 			} catch (FENException e) {
