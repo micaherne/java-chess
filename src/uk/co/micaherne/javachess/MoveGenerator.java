@@ -72,7 +72,37 @@ public class MoveGenerator {
 				result[moveCount] = MoveUtils.create(lowestBit - 16, lowestBit);
 				destinationSquares ^= (1 << lowestBit);
 			}
+		} else {
+			long pawns = position.pieceBitboards[Chess.Piece.PAWN] & position.colourBitboards[Chess.Colour.BLACK];
+			long oneSquareMoves = (pawns >>> 8) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
+			long destinationSquares = oneSquareMoves;
+			while (Long.bitCount(destinationSquares) != 0) {
+				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
+				moveCount++;
+				result[moveCount] = MoveUtils.create(lowestBit + Chess.Bitboard.DirectionOffset.N, lowestBit);
+				destinationSquares ^= (1 << lowestBit);
+			}
+			long twoSquareMoves = (oneSquareMoves & (Chess.Bitboard.RANK_1 >> 16)) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
+			destinationSquares = twoSquareMoves;
+			while (Long.bitCount(destinationSquares) != 0) {
+				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
+				moveCount++;
+				result[moveCount] = MoveUtils.create(lowestBit + 16, lowestBit);
+				destinationSquares ^= (1 << lowestBit);
+			}
 		}
+		
+		// TODO: Pawn captures
+		
+		// TODO: Knight moves
+		
+		// TODO: Bishop moves
+		
+		// TODO: Queen moves
+		
+		// TODO: King moves
+		
+		// TODO: Castling
 		
 		result[0] = moveCount;
 		
