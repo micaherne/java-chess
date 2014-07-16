@@ -15,12 +15,14 @@ public class MoveGeneratorTests {
 	public void testMoveGenerator() throws NotationException {
 		Position position = Position.fromFEN(Chess.START_POS_FEN);
 		MoveGenerator moveGenerator = new MoveGenerator(position);
-		System.out.println(BitboardUtils.toString(moveGenerator.bbRayAttacks[Chess.Bitboard.DirectionIndex.E][Chess.Square.D1]));
+		// System.out.println(BitboardUtils.toString(moveGenerator.bbRayAttacks[Chess.Bitboard.DirectionIndex.E][Chess.Square.D1]));
 	}
 
 	@Test
-	public void testGenerateMoves() {
-		// fail("Not yet implemented");
+	public void testGenerateMoves() throws NotationException {
+		Position position = Position.fromFEN(Chess.START_POS_FEN);
+		MoveGenerator moveGenerator = new MoveGenerator(position);
+		assertEquals(20, moveGenerator.generateMoves()[0]);
 	}
 
 }

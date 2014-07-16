@@ -46,7 +46,7 @@ public class Position {
 			}
 			pieceBitboards[board[i] & 7] |= (1L << i);
 			pieceBitboards[Chess.Bitboard.OCCUPIED] |= (1L << i);
-			colourBitboards[(board[i] >> 3) & 1] |= (1L << i);
+			colourBitboards[~(board[i] >> 3) & 1] |= (1L << i);
 		}
 	}
 	
@@ -116,6 +116,9 @@ public class Position {
 				throw new FENException("fullmove must be integer", e);
 			}
 		}
+		
+		result.initialisePieceBitboards();
+		
 		return result;
 	}
 

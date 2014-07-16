@@ -44,8 +44,37 @@ public class MoveGenerator {
 		}
 	}
 
+	/**
+	 * An array of moves. 0 index is number of actual moves.
+	 * 
+	 * @return
+	 */
 	public int[] generateMoves() {
+		int moveCount = 0;
 		int[] result = new int[128];
+		
+		// Pawn moves
+		if (position.whiteToMove) {
+			long pawns = position.pieceBitboards[Chess.Piece.PAWN] & position.colourBitboards[Chess.Colour.WHITE];
+			long oneSquareMoves = (pawns << 8) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
+			long destinationSquares = oneSquareMoves;
+			while (Long.bitCount(destinationSquares) != 0) {
+				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
+				moveCount++;
+				result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.N, lowestBit);
+				destinationSquares ^= (1 << lowestBit);
+			}
+			long twoSquareMoves = (oneSquareMoves & (Chess.Bitboard.RANK_1 << 16)) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
+			destinationSquares = twoSquareMoves;
+			while (Long.bitCount(destinationSquares) != 0) {
+				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
+				moveCount++;
+				result[moveCount] = MoveUtils.create(lowestBit - 16, lowestBit);
+				destinationSquares ^= (1 << lowestBit);
+			}
+		}
+		
+		result[0] = moveCount;
 		
 		return result;
 	}
