@@ -4,12 +4,14 @@ public class MoveGenerator {
 	
 	private Position position;
 	public long[][] bbRayAttacks = new long[8][64];
+	public long[] bbKnightAttacks = new long[64];
 
 	public MoveGenerator(Position position) {
 		this.position = position;
 		initialiseRayAttacks();
+		initialiseKnightAttacks();
 	}
-	
+
 	private void initialiseRayAttacks() {
 		for (int origin = 0; origin < 64; origin++) {
 			for (int directionIndex = 0; directionIndex < 9; directionIndex++) {
@@ -21,6 +23,20 @@ public class MoveGenerator {
 				setRayAttack(origin, Chess.Bitboard.DirectionOffset.NW, Chess.Bitboard.DirectionIndex.NW, Chess.Bitboard.FILE_H | Chess.Bitboard.RANK_1);
 				setRayAttack(origin, Chess.Bitboard.DirectionOffset.N,  Chess.Bitboard.DirectionIndex.N, Chess.Bitboard.RANK_1);
 				setRayAttack(origin, Chess.Bitboard.DirectionOffset.NE, Chess.Bitboard.DirectionIndex.NE, Chess.Bitboard.FILE_A | Chess.Bitboard.RANK_1);
+			}
+		}
+	}
+	
+	
+	private void initialiseKnightAttacks() {
+		for (int origin = 0; origin < 64; origin++) {
+			bbKnightAttacks[origin] = 0;
+			for (int i = 0; i < Chess.Bitboard.knightOffsets.length; i++) {
+				int target = origin + Chess.Bitboard.knightOffsets[i];
+				// TODO: Make an up to 5x5 mask of ranks and files to stop wrapping
+				if (target >= 0 && target < 64) {
+					bbKnightAttacks[origin] |= 1l << target;
+				}
 			}
 		}
 	}

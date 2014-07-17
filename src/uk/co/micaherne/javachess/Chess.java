@@ -164,6 +164,8 @@ public class Chess {
 			public static final int N  = 6;
 			public static final int NE = 7;
 		}
+		
+		public static int[] knightOffsets = new int[] {-17, -15, -10, -6, 6, 10, 15, 17}; 
 				
 		public static final long FILE_A = 72340172838076673L;
 		public static final long FILE_B = 144680345676153346L;
@@ -182,6 +184,8 @@ public class Chess {
 		public static final long RANK_7 = 71776119061217280L;
 		public static final long RANK_8 = -72057594037927936L;
 		
+		public static final long[] files = new long[] {FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H};
+		public static final long[] ranks = new long[] {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8};
 	}
 	
 	public static enum NotationType {
