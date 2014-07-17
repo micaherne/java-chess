@@ -48,13 +48,26 @@ public class Integer64Test {
 			fileA |= (fileA << 8);
 			rank1 |= (rank1 << 1);
 		}
-		long fileH = fileA << 7;
-		long rank8 = rank1 << 56;
 		
-		System.out.println("public static final long FILE_A = " + fileA + "L;\n" );
-		System.out.println("public static final long FILE_H = " + fileH + "L;\n" );
-		System.out.println("public static final long RANK_1 = " + rank1 + "L;\n" );
-		System.out.println("public static final long FILE_8 = " + rank8 + "L;\n" );
+		String fileOutput[] = new String[8];
+		String rankOutput[] = new String[8];
+		
+		for (int i = 0; i < 8; i++) {
+			long file = fileA << i;
+			long rank = rank1 << (8 * i);
+			char fileName = (char) ('A' + i);
+			String rankName = String.valueOf(i + 1);
+			fileOutput[i] = "public static final long FILE_" + fileName + " = " + file + "L;";
+			rankOutput[i] = "public static final long RANK_" + rankName + " = " + rank + "L;";
+		}
+		
+		for (int i = 0; i < 8; i++) {
+			System.out.println(fileOutput[i]);
+		}
+		
+		for (int i = 0; i < 8; i++) {
+			System.out.println(rankOutput[i]);
+		}
 	}
 	
 

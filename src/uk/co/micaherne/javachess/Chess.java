@@ -164,10 +164,22 @@ public class Chess {
 			public static final int N  = 6;
 			public static final int NE = 7;
 		}
-		
+				
 		public static final long FILE_A = 72340172838076673L;
+		public static final long FILE_B = 144680345676153346L;
+		public static final long FILE_C = 289360691352306692L;
+		public static final long FILE_D = 578721382704613384L;
+		public static final long FILE_E = 1157442765409226768L;
+		public static final long FILE_F = 2314885530818453536L;
+		public static final long FILE_G = 4629771061636907072L;
 		public static final long FILE_H = -9187201950435737472L;
 		public static final long RANK_1 = 255L;
+		public static final long RANK_2 = 65280L;
+		public static final long RANK_3 = 16711680L;
+		public static final long RANK_4 = 4278190080L;
+		public static final long RANK_5 = 1095216660480L;
+		public static final long RANK_6 = 280375465082880L;
+		public static final long RANK_7 = 71776119061217280L;
 		public static final long RANK_8 = -72057594037927936L;
 		
 	}
