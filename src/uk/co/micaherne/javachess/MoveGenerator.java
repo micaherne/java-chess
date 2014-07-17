@@ -61,7 +61,11 @@ public class MoveGenerator {
 			while (Long.bitCount(destinationSquares) != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
 				moveCount++;
-				result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.N, lowestBit);
+				if (lowestBit >= 56) {
+					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.N, lowestBit, true, false);
+				} else {
+					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.N, lowestBit);
+				}
 				destinationSquares ^= (1 << lowestBit);
 			}
 			long twoSquareMoves = (oneSquareMoves & (Chess.Bitboard.RANK_1 << 16)) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
@@ -79,7 +83,11 @@ public class MoveGenerator {
 			while (Long.bitCount(destinationSquares) != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
 				moveCount++;
-				result[moveCount] = MoveUtils.create(lowestBit + Chess.Bitboard.DirectionOffset.N, lowestBit);
+				if (lowestBit < 8) {
+					result[moveCount] = MoveUtils.create(lowestBit + Chess.Bitboard.DirectionOffset.N, lowestBit);
+				} else {
+					result[moveCount] = MoveUtils.create(lowestBit + Chess.Bitboard.DirectionOffset.N, lowestBit);
+				}
 				destinationSquares ^= (1 << lowestBit);
 			}
 			long twoSquareMoves = (oneSquareMoves & (Chess.Bitboard.RANK_1 >> 16)) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
