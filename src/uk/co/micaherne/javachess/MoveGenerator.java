@@ -131,7 +131,7 @@ public class MoveGenerator {
 				} else {
 					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.N, lowestBit);
 				}
-				destinationSquares ^= (1 << lowestBit);
+				destinationSquares ^= (1L << lowestBit);
 			}
 			long twoSquareMoves = ((oneSquareMoves & (Chess.Bitboard.RANK_3)) << 8) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
 			destinationSquares = twoSquareMoves;
