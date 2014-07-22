@@ -40,6 +40,14 @@ public class MoveGeneratorTests {
 	}
 	
 	@Test
+	public void testGenerateMoves2() throws NotationException {
+		Position position2 = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
+		MoveGenerator moveGenerator2 = new MoveGenerator(position2);
+		int[] moves = moveGenerator2.generateMoves();
+		assertEquals(48, moves[0]);
+	}
+	
+	@Test
 	public void testTemp() throws NotationException {
 		/*//System.out.println(BitboardUtils.toString(moveGenerator.bbKingAttacks[Chess.Square.A8]));
 		Position position2 = Position.fromFEN("3kQ3/8/8/8/8/8/8/8 b - -");

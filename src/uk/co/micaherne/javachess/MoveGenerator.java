@@ -123,7 +123,7 @@ public class MoveGenerator {
 			long pawns = position.pieceBitboards[Chess.Piece.PAWN] & position.colourBitboards[Chess.Colour.WHITE];
 			long oneSquareMoves = (pawns << 8) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
 			long destinationSquares = oneSquareMoves;
-			while (Long.bitCount(destinationSquares) != 0) {
+			while (destinationSquares != 0L) {
 				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
 				moveCount++;
 				if (lowestBit >= 56) {
@@ -135,7 +135,7 @@ public class MoveGenerator {
 			}
 			long twoSquareMoves = ((oneSquareMoves & (Chess.Bitboard.RANK_3)) << 8) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
 			destinationSquares = twoSquareMoves;
-			while (Long.bitCount(destinationSquares) != 0) {
+			while (destinationSquares != 0L) {
 				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
 				moveCount++;
 				result[moveCount] = MoveUtils.create(lowestBit - 16, lowestBit);
