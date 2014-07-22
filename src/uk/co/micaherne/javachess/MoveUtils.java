@@ -20,6 +20,7 @@ package uk.co.micaherne.javachess;
 public class MoveUtils {
 	
 	public static int create(int from, int to) {
+		System.out.println("Creating move from " + from + " to " + to);
 		return from << 8 | to;
 	}
 	

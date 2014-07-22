@@ -46,8 +46,8 @@ public class Chess {
 	}
 	
 	public static class Colour {
-		public static final int BLACK = 0;
-		public static final int WHITE = 1;
+		public static final int WHITE = 0;
+		public static final int BLACK = 1;
 	}
 	
 	

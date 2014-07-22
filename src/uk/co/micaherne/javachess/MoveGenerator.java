@@ -2,7 +2,7 @@ package uk.co.micaherne.javachess;
 
 public class MoveGenerator {
 	
-	private Position position;
+	public Position position;
 	public long[][] bbRayAttacks = new long[8][64];
 	public long[] bbKnightAttacks = new long[64];
 
@@ -30,14 +30,31 @@ public class MoveGenerator {
 	
 	private void initialiseKnightAttacks() {
 		for (int origin = 0; origin < 64; origin++) {
+			// Generate masks to prevent wrapping
+			long fileMask = 0L;
+			long rankMask = 0L;
+			int originFile = origin % 8;
+			int originRank = origin / 8;
+			for (int j = 0; j < 8; j++) {
+				if (Math.abs(j - originFile) < 3) {
+					fileMask |= Chess.Bitboard.files[j];
+				}
+				if (Math.abs(j - originRank) < 3) {
+					rankMask |= Chess.Bitboard.ranks[j];
+				}
+			}
+			
 			bbKnightAttacks[origin] = 0;
 			for (int i = 0; i < Chess.Bitboard.knightOffsets.length; i++) {
+				
 				int target = origin + Chess.Bitboard.knightOffsets[i];
-				// TODO: Make an up to 5x5 mask of ranks and files to stop wrapping
 				if (target >= 0 && target < 64) {
 					bbKnightAttacks[origin] |= 1l << target;
 				}
+				
 			}
+			bbKnightAttacks[origin] &= fileMask;
+			bbKnightAttacks[origin] &= rankMask;
 		}
 	}
 	
@@ -69,8 +86,11 @@ public class MoveGenerator {
 		int moveCount = 0;
 		int[] result = new int[128];
 		
+		int colourToMove;
+		int oppositeColour;
 		// Pawn moves
 		if (position.whiteToMove) {
+			
 			long pawns = position.pieceBitboards[Chess.Piece.PAWN] & position.colourBitboards[Chess.Colour.WHITE];
 			long oneSquareMoves = (pawns << 8) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
 			long destinationSquares = oneSquareMoves;
@@ -84,15 +104,20 @@ public class MoveGenerator {
 				}
 				destinationSquares ^= (1 << lowestBit);
 			}
-			long twoSquareMoves = (oneSquareMoves & (Chess.Bitboard.RANK_1 << 16)) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
+			long twoSquareMoves = ((oneSquareMoves & (Chess.Bitboard.RANK_3)) << 8) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
 			destinationSquares = twoSquareMoves;
 			while (Long.bitCount(destinationSquares) != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
 				moveCount++;
 				result[moveCount] = MoveUtils.create(lowestBit - 16, lowestBit);
-				destinationSquares ^= (1 << lowestBit);
+				destinationSquares ^= (1L << lowestBit);
 			}
+			
+			// For using later
+			colourToMove = Chess.Colour.WHITE;
+			oppositeColour = Chess.Colour.BLACK;
 		} else {
+			
 			long pawns = position.pieceBitboards[Chess.Piece.PAWN] & position.colourBitboards[Chess.Colour.BLACK];
 			long oneSquareMoves = (pawns >>> 8) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
 			long destinationSquares = oneSquareMoves;
@@ -100,25 +125,40 @@ public class MoveGenerator {
 				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
 				moveCount++;
 				if (lowestBit < 8) {
-					result[moveCount] = MoveUtils.create(lowestBit + Chess.Bitboard.DirectionOffset.N, lowestBit);
+					result[moveCount] = MoveUtils.create(lowestBit + Chess.Bitboard.DirectionOffset.N, lowestBit, true, false);
 				} else {
 					result[moveCount] = MoveUtils.create(lowestBit + Chess.Bitboard.DirectionOffset.N, lowestBit);
 				}
-				destinationSquares ^= (1 << lowestBit);
+				destinationSquares ^= (1L << lowestBit);
 			}
-			long twoSquareMoves = (oneSquareMoves & (Chess.Bitboard.RANK_1 >> 16)) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
+			long twoSquareMoves = ((oneSquareMoves & (Chess.Bitboard.RANK_6)) >>> 8) & ~position.pieceBitboards[Chess.Bitboard.OCCUPIED];
 			destinationSquares = twoSquareMoves;
 			while (Long.bitCount(destinationSquares) != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
 				moveCount++;
 				result[moveCount] = MoveUtils.create(lowestBit + 16, lowestBit);
-				destinationSquares ^= (1 << lowestBit);
+				destinationSquares ^= (1L << lowestBit);
 			}
+			
+			colourToMove = Chess.Colour.BLACK;
+			oppositeColour = Chess.Colour.WHITE;
 		}
 		
 		// TODO: Pawn captures
 		
 		// TODO: Knight moves
+		long knights = position.pieceBitboards[Chess.Piece.KNIGHT] & position.colourBitboards[colourToMove];
+		while (Long.bitCount(knights) != 0) {
+			int lowestBit = Long.numberOfTrailingZeros(knights);
+			long moves = bbKnightAttacks[lowestBit] & ~position.colourBitboards[colourToMove];
+			while (Long.bitCount(moves) != 0) {
+				int lowestMoveBit = Long.numberOfTrailingZeros(moves);
+				moveCount++;
+				result[moveCount] = MoveUtils.create(lowestBit, lowestMoveBit);
+				moves ^= (1L << lowestMoveBit);
+			}
+			knights ^= (1L << lowestBit);
+		}
 		
 		// TODO: Bishop moves
 		
