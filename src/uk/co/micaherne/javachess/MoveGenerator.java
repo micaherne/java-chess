@@ -178,7 +178,7 @@ public class MoveGenerator {
 		if (position.whiteToMove) {
 			
 			long pawns = position.pieceBitboards[Chess.Piece.PAWN] & position.colourBitboards[Chess.Colour.WHITE];
-			long captureNW = targets & ~Chess.Bitboard.FILE_A & (pawns << 7);
+			long captureNW = targets & ((~Chess.Bitboard.FILE_A & pawns) << 7);
 			while (captureNW != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(captureNW);
 				moveCount++;
@@ -190,7 +190,7 @@ public class MoveGenerator {
 				captureNW ^= (1L << lowestBit);
 			}
 			
-			long captureNE = targets & ~Chess.Bitboard.FILE_H & (pawns << 9);
+			long captureNE = targets & ((~Chess.Bitboard.FILE_H & pawns) << 9);
 			while (captureNE != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(captureNE);
 				moveCount++;
@@ -203,7 +203,7 @@ public class MoveGenerator {
 			}
 		} else {
 			long pawns = position.pieceBitboards[Chess.Piece.PAWN] & position.colourBitboards[Chess.Colour.BLACK];
-			long captureSW = targets & ~Chess.Bitboard.FILE_H & (pawns >>> 9);
+			long captureSW = targets & ((~Chess.Bitboard.FILE_A & pawns) >>> 9);
 			while (captureSW != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(captureSW);
 				moveCount++;
@@ -215,7 +215,7 @@ public class MoveGenerator {
 				captureSW ^= (1L << lowestBit);
 			}
 			
-			long captureSE = targets & ~Chess.Bitboard.FILE_H & (pawns >>> 7);
+			long captureSE = targets & ((~Chess.Bitboard.FILE_H & pawns) >>> 7);
 			while (captureSE != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(captureSE);
 				moveCount++;
