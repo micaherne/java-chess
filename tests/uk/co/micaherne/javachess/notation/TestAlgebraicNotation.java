@@ -6,15 +6,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.co.micaherne.javachess.Chess;
+import uk.co.micaherne.javachess.MoveUtils;
 import uk.co.micaherne.javachess.NotationException;
 
 public class TestAlgebraicNotation {
 	
-	private AlgebraicNotation notation;
+	private LongAlgebraicNotation notation;
 	
 	@Before
 	public void setUp() throws Exception {
-		notation = new AlgebraicNotation();
+		notation = new LongAlgebraicNotation();
 	}
 	
 	@Test(expected=NotationException.class)
@@ -34,6 +35,12 @@ public class TestAlgebraicNotation {
 	public void testFromPiece() throws NotationException {
 		String piece = notation.fromPiece(Chess.Piece.KING);
 		assertEquals("K", piece);
+	}
+	
+	@Test
+	public void testToString() throws NotationException  {
+		int move = MoveUtils.create(Chess.Square.E2, Chess.Square.E4);
+		assertEquals("e2e4", notation.toString(move));
 	}
 
 }

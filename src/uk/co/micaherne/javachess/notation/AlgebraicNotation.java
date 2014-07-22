@@ -3,7 +3,7 @@ package uk.co.micaherne.javachess.notation;
 import uk.co.micaherne.javachess.Chess;
 import uk.co.micaherne.javachess.NotationException;
 
-public class AlgebraicNotation {
+public abstract class AlgebraicNotation {
 		
 	public int toSquare(String representation) throws NotationException {
 		if (representation.length() != 2) {

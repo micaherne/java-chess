@@ -4,8 +4,8 @@ package uk.co.micaherne.javachess;
  * Utility class for dealing with moves, which are stored internally
  * as an int:
  * 
- * lowest 8 bits: from square
- * next 8 bits: to square
+ * lowest 8 bits: to square
+ * next 8 bits: from square
  * next 8 bits: promoted piece
  * next 1 bit: queening move?
  * next 1 bit: e.p. capture?
@@ -20,7 +20,7 @@ package uk.co.micaherne.javachess;
 public class MoveUtils {
 	
 	public static int create(int from, int to) {
-		System.out.println("Creating move from " + from + " to " + to);
+		// System.out.println("Creating move from " + from + " to " + to);
 		return from << 8 | to;
 	}
 	
@@ -34,24 +34,24 @@ public class MoveUtils {
 		return from << 8 | to | (2 << 24) | (promotedPiece << 16);
 	}
 	
-	public static int fromSquare(int move) {
-		return 255 & (move >>> 8);
+	public static int fromSquare(long move) {
+		return (int) (255 & (move >>> 8));
 	}
 
-	public static int toSquare(int move) {
-		return move & 255;
+	public static int toSquare(long move) {
+		return (int) (move & 255);
 	}
 	
-	public static boolean isQueening(int move) {
+	public static boolean isQueening(long move) {
 		return ((move >>> 25) & 1) == 1;
 	}
 	
-	public static boolean isEnPassentCapture(int move) {
+	public static boolean isEnPassentCapture(long move) {
 		return ((move >>> 26) & 1) == 1;
 	}
 
-	public static int promotedPiece(int move) {
-		return (move >>> 16) & 255;
+	public static int promotedPiece(long move) {
+		return (int) ((move >>> 16) & 255);
 	}
 	
 }

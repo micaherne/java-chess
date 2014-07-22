@@ -166,6 +166,7 @@ public class Chess {
 		}
 		
 		public static int[] knightOffsets = new int[] {-17, -15, -10, -6, 6, 10, 15, 17}; 
+		public static int[] kingOffsets = new int[] {-9, -8, -7, -1, 1, 7, 8, 9}; 
 				
 		public static final long FILE_A = 72340172838076673L;
 		public static final long FILE_B = 144680345676153346L;

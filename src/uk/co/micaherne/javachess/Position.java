@@ -2,6 +2,7 @@ package uk.co.micaherne.javachess;
 
 import uk.co.micaherne.javachess.Chess.NotationType;
 import uk.co.micaherne.javachess.notation.AlgebraicNotation;
+import uk.co.micaherne.javachess.notation.LongAlgebraicNotation;
 
 public class Position {
 	
@@ -52,7 +53,7 @@ public class Position {
 	
 	public static Position fromFEN(String fen) throws NotationException {
 		Position result = new Position();
-		AlgebraicNotation notation = new AlgebraicNotation();
+		AlgebraicNotation notation = new LongAlgebraicNotation();
 		String[] fenParts = fen.split(" ");
 		String[] boardParts = fenParts[0].split("\\/");
 
@@ -124,7 +125,7 @@ public class Position {
 
 	@Override
 	public String toString() {
-		AlgebraicNotation notation = new AlgebraicNotation();
+		LongAlgebraicNotation notation = new LongAlgebraicNotation();
 		StringBuilder builder = new StringBuilder("+-+-+-+-+-+-+-+-+\n");
 		for (int i = 7; i >= 0; i--) {
 			builder.append("|");
