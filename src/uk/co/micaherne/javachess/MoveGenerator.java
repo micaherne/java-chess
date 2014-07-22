@@ -173,8 +173,60 @@ public class MoveGenerator {
 			oppositeColour = Chess.Colour.WHITE;
 		}
 		
-		// TODO: Pawn captures
-		
+		// Pawn captures
+		long targets = (position.epSquare | position.pieceBitboards[Chess.Bitboard.OCCUPIED]) & ~position.colourBitboards[colourToMove];
+		if (position.whiteToMove) {
+			
+			long pawns = position.pieceBitboards[Chess.Piece.PAWN] & position.colourBitboards[Chess.Colour.WHITE];
+			long captureNW = targets & ~Chess.Bitboard.FILE_A & (pawns << 7);
+			while (captureNW != 0) {
+				int lowestBit = Long.numberOfTrailingZeros(captureNW);
+				moveCount++;
+				if (lowestBit >= 56) {
+					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NW, lowestBit, true, false);
+				} else {
+					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NW, lowestBit);
+				}
+				captureNW ^= (1L << lowestBit);
+			}
+			
+			long captureNE = targets & ~Chess.Bitboard.FILE_H & (pawns << 9);
+			while (captureNE != 0) {
+				int lowestBit = Long.numberOfTrailingZeros(captureNE);
+				moveCount++;
+				if (lowestBit >= 56) {
+					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NE, lowestBit, true, false);
+				} else {
+					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NE, lowestBit);
+				}
+				captureNE ^= (1L << lowestBit);
+			}
+		} else {
+			long pawns = position.pieceBitboards[Chess.Piece.PAWN] & position.colourBitboards[Chess.Colour.BLACK];
+			long captureSW = targets & ~Chess.Bitboard.FILE_H & (pawns >>> 9);
+			while (captureSW != 0) {
+				int lowestBit = Long.numberOfTrailingZeros(captureSW);
+				moveCount++;
+				if (lowestBit < 8) {
+					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SW, lowestBit, true, false);
+				} else {
+					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SW, lowestBit);
+				}
+				captureSW ^= (1L << lowestBit);
+			}
+			
+			long captureSE = targets & ~Chess.Bitboard.FILE_H & (pawns >>> 7);
+			while (captureSE != 0) {
+				int lowestBit = Long.numberOfTrailingZeros(captureSE);
+				moveCount++;
+				if (lowestBit < 8) {
+					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SE, lowestBit, true, false);
+				} else {
+					result[moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SE, lowestBit);
+				}
+				captureSE ^= (1L << lowestBit);
+			}
+		}
 		// Knight moves
 		long knights = position.pieceBitboards[Chess.Piece.KNIGHT] & position.colourBitboards[colourToMove];
 		while (knights != 0L) {

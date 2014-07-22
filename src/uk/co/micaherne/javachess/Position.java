@@ -1,6 +1,5 @@
 package uk.co.micaherne.javachess;
 
-import uk.co.micaherne.javachess.Chess.NotationType;
 import uk.co.micaherne.javachess.notation.AlgebraicNotation;
 import uk.co.micaherne.javachess.notation.LongAlgebraicNotation;
 
@@ -24,7 +23,7 @@ public class Position {
 	public int moves = 0;
 	public int halfMoves = 0;
 	
-	public int epSquare = 0;
+	public long epSquare = 0; // en passent square as a bitboard
 	
 	public boolean whiteToMove = false;
 	
@@ -99,7 +98,7 @@ public class Position {
 			}
 		}
 		if (!"-".equals(fenParts[3])) {
-			result.epSquare = notation.toSquare(fenParts[3]);
+			result.epSquare = 1 << notation.toSquare(fenParts[3]);
 		}
 
 		if (fenParts.length > 4) {

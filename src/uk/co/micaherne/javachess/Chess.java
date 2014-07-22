@@ -167,7 +167,10 @@ public class Chess {
 		
 		public static int[] knightOffsets = new int[] {-17, -15, -10, -6, 6, 10, 15, 17}; 
 		public static int[] kingOffsets = new int[] {-9, -8, -7, -1, 1, 7, 8, 9}; 
-				
+		
+		// We don't have offsets for each colour as the logic is complicated
+		public static int[] pawnCaptureOffsets = new int[]{7, 9};
+		
 		public static final long FILE_A = 72340172838076673L;
 		public static final long FILE_B = 144680345676153346L;
 		public static final long FILE_C = 289360691352306692L;
