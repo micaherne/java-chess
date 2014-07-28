@@ -1,17 +1,64 @@
 package uk.co.micaherne.javachess;
 
+import uk.co.micaherne.javachess.Chess.Colour;
+
 public class MoveGenerator {
 	
 	public Position position;
+	public long[][] bbPawnAttacks = new long[2][64]; // colour, square
 	public long[][] bbRayAttacks = new long[8][64];
+	public long[] bbRookAttacks = new long[64];
 	public long[] bbKnightAttacks = new long[64];
+	public long[] bbBishopAttacks = new long[64];
+	public long[] bbQueenAttacks = new long[64];
 	public long[] bbKingAttacks = new long[64];
+	
+	// Castling data
+	public static final int[] ooFrom = {Chess.Square.E1, Chess.Square.E8};
+	public static final int[] ooTo = {Chess.Square.G1, Chess.Square.G8};
+	public static final int[] oooTo = {Chess.Square.C1, Chess.Square.C8};
+	public static final int[][] ooIntermediateSquares = {{Chess.Square.F1, Chess.Square.G1}, {Chess.Square.F8, Chess.Square.G8}};
+	public static final int[][] oooIntermediateSquares = {{Chess.Square.B1, Chess.Square.C1, Chess.Square.D1}, {Chess.Square.B8, Chess.Square.C8, Chess.Square.D8}};
+	public static final long[] bbOO = {0x0000000000000060L, 0x6000000000000000L};
+	public static final long[] bbOOO = {0x000000000000000EL, 0x0E00000000000000L};
 
 	public MoveGenerator(Position position) {
 		this.position = position;
+		initialisePawnAttacks();
 		initialiseRayAttacks();
+		initialiseRookAttacks();
 		initialiseKnightAttacks();
+		initialiseBishopAttacks();
+		initialiseQueenAttacks();
 		initialiseKingAttacks();
+	}
+	
+	private void initialisePawnAttacks() {
+		for (int origin = 0; origin < 64; origin++) {
+			if (origin < 56) {
+				for (int j = 0; j < 2; j++) {
+					int square = origin + Chess.Bitboard.bishopOffsets[j];
+					
+					if ((Math.abs((square % 8) - (origin % 8)) == 1) 
+							&& (Math.abs((square / 8 - origin / 8)) == 1)
+							&& square > -1) {
+						bbPawnAttacks[Colour.BLACK][origin] |= (1L << square);
+					}
+				}
+			}
+			
+			if (origin > 7) {
+				for (int j = 2; j < 4; j++) {
+					int square = origin + Chess.Bitboard.bishopOffsets[j];
+					
+					if ((Math.abs((square % 8) - (origin % 8)) == 1) 
+							&& (Math.abs((square / 8 - origin / 8)) == 1)
+							&& square < 64) {
+						bbPawnAttacks[Colour.WHITE][origin] |= (1L << square);
+					}
+				}
+			}
+		}
 	}
 
 	private void initialiseRayAttacks() {
@@ -24,6 +71,13 @@ public class MoveGenerator {
 			setRayAttack(origin, Chess.Bitboard.DirectionOffset.NW, Chess.Bitboard.DirectionIndex.NW, Chess.Bitboard.FILE_H | Chess.Bitboard.RANK_1);
 			setRayAttack(origin, Chess.Bitboard.DirectionOffset.N,  Chess.Bitboard.DirectionIndex.N, Chess.Bitboard.RANK_1);
 			setRayAttack(origin, Chess.Bitboard.DirectionOffset.NE, Chess.Bitboard.DirectionIndex.NE, Chess.Bitboard.FILE_A | Chess.Bitboard.RANK_1);
+		}
+	}
+	
+	private void initialiseRookAttacks() {
+		for (int origin = 0; origin < 64; origin++) {
+			bbRookAttacks[origin] = bbRayAttacks[Chess.Bitboard.DirectionIndex.N][origin] | bbRayAttacks[Chess.Bitboard.DirectionIndex.E][origin]
+					| bbRayAttacks[Chess.Bitboard.DirectionIndex.W][origin] | bbRayAttacks[Chess.Bitboard.DirectionIndex.S][origin];
 		}
 	}
 	
@@ -54,6 +108,19 @@ public class MoveGenerator {
 			}
 			bbKnightAttacks[origin] &= fileMask;
 			bbKnightAttacks[origin] &= rankMask;
+		}
+	}
+	
+	private void initialiseBishopAttacks() {
+		for (int origin = 0; origin < 64; origin++) {
+			bbBishopAttacks[origin] = bbRayAttacks[Chess.Bitboard.DirectionIndex.NW][origin] | bbRayAttacks[Chess.Bitboard.DirectionIndex.NE][origin]
+					| bbRayAttacks[Chess.Bitboard.DirectionIndex.SW][origin] | bbRayAttacks[Chess.Bitboard.DirectionIndex.SE][origin];
+		}
+	}
+	
+	private void initialiseQueenAttacks() {
+		for (int origin = 0; origin < 64; origin++) {
+			bbQueenAttacks[origin] = bbRookAttacks[origin] | bbBishopAttacks[origin];
 		}
 	}
 	
@@ -327,7 +394,19 @@ public class MoveGenerator {
 			kings ^= (1L << lowestBit);
 		}
 		
-		// TODO: Castling
+		if (position.castling[colourToMove][0] 
+				&& ((bbOOO[colourToMove] & position.pieceBitboards[Chess.Bitboard.OCCUPIED]) == 0)
+				&& !attacks(oooIntermediateSquares[colourToMove][0], oppositeColour)
+				&& !attacks(oooIntermediateSquares[colourToMove][1], oppositeColour)
+				&& !attacks(oooIntermediateSquares[colourToMove][2], oppositeColour)) {
+			result[moveCount++] = MoveUtils.create(ooFrom[colourToMove], oooTo[colourToMove]);
+		}
+		if (position.castling[colourToMove][1] 
+				&& ((bbOO[colourToMove] & position.pieceBitboards[Chess.Bitboard.OCCUPIED]) == 0)
+				&& !attacks(ooIntermediateSquares[colourToMove][0], oppositeColour)
+				&& !attacks(ooIntermediateSquares[colourToMove][1], oppositeColour)) {
+			result[moveCount++] = MoveUtils.create(ooFrom[colourToMove], ooTo[colourToMove]);
+		}
 		
 		result[0] = moveCount;
 		
@@ -363,6 +442,58 @@ public class MoveGenerator {
 			attacks ^= bbRayAttacks[directionIndex][square];
 		}
 		return attacks;
+	}
+	
+	/**
+	 * Get a bitboard of all the squares actually attacked by the bishop on the given
+	 * origin square in the position.
+	 * 
+	 * NB. There is no check that there *is* a bishop on the origin square. Calling code
+	 * must do this.
+	 * 
+	 * @param origin
+	 * @return
+	 */
+	public long bishopAttacks(int origin) {
+		long result = 0L;
+		for (int i = 0; i < 4; i++) {
+			result |= bbRayAttacks[i][origin];
+		}
+		return result;
+	}
+	
+	public long rookAttacks(int origin) {
+		long result = 0L;
+		for (int i = 4; i < 8; i++) {
+			result |= bbRayAttacks[i][origin];
+		}
+		return result;
+	}
+	
+	// Attack logic (nicked from Crafty)
+	public boolean attacks(int square, int side) {
+		if ((bbPawnAttacks[oppositeColour(side)][square] & position.pieceBitboards[Chess.Piece.PAWN] & position.colourBitboards[side]) != 0) {
+			return true;
+		}
+		if ((bbKnightAttacks[square] & position.pieceBitboards[Chess.Piece.KNIGHT] & position.colourBitboards[side]) != 0) {
+			return true;
+		}
+		if (((bbBishopAttacks[square] & (position.pieceBitboards[Chess.Piece.BISHOP] | position.pieceBitboards[Chess.Piece.QUEEN]) & position.colourBitboards[side]) != 0) 
+				&& (bishopAttacks(square) & (position.pieceBitboards[Chess.Piece.BISHOP] | position.pieceBitboards[Chess.Piece.QUEEN]) & position.colourBitboards[side]) != 0) {
+			return true;
+		}
+		if (((bbRookAttacks[square] & (position.pieceBitboards[Chess.Piece.ROOK] | position.pieceBitboards[Chess.Piece.QUEEN]) & position.colourBitboards[side]) != 0) 
+				&& (rookAttacks(square) & (position.pieceBitboards[Chess.Piece.ROOK] | position.pieceBitboards[Chess.Piece.QUEEN]) & position.colourBitboards[side]) != 0) {
+			return true;
+		}
+		if ((bbKingAttacks[square] & position.pieceBitboards[Chess.Piece.KING] & position.colourBitboards[side]) != 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static int oppositeColour(int colour) {
+		return colour ^ 1;
 	}
 
 }

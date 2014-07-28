@@ -12,11 +12,6 @@ public class Position {
 	
 	public int[] board;
 	
-	public boolean castleWhiteKing = false;
-	public boolean castleWhiteQueen = false;
-	public boolean castleBlackKing = false;
-	public boolean castleBlackQueen = false;
-	
 	// colour, (q, k)
 	public boolean castling[][];
 	

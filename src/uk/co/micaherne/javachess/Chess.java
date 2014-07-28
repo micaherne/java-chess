@@ -139,33 +139,38 @@ public class Chess {
 		 */
 		public static class DirectionOffset {
 			public static final int SW = -9;
-			public static final int S  = -8;
 			public static final int SE = -7;
+			public static final int NW = 7;
+			public static final int NE = 9;
+			public static final int S  = -8;
 			public static final int W  = -1;
 			public static final int E  = 1;
-			public static final int NW = 7;
 			public static final int N  = 8;
-			public static final int NE = 9;
 		}
 		
 		/**
 		 * Index into array of attack bitboards for each direction.
+		 * 
+		 * First four are bishop directions, last four are rooks
 		 * 
 		 * @author Michael Aherne
 		 *
 		 */
 		public static class DirectionIndex {
 			public static final int SW = 0;
-			public static final int S  = 1;
-			public static final int SE = 2;
-			public static final int W  = 3;
-			public static final int E  = 4;
-			public static final int NW = 5;
-			public static final int N  = 6;
-			public static final int NE = 7;
+			public static final int SE = 1;
+			public static final int NW = 2;
+			public static final int NE = 3;
+			public static final int S  = 4;
+			public static final int W  = 5;
+			public static final int E  = 6;
+			public static final int N  = 7;
 		}
 		
-		public static int[] knightOffsets = new int[] {-17, -15, -10, -6, 6, 10, 15, 17}; 
+		public static int[] rookOffsets = new int[] { -8, -1, 1, 8};
+		public static int[] knightOffsets = new int[] {-17, -15, -10, -6, 6, 10, 15, 17};
+		public static int[] bishopOffsets = new int[] {-9, -7, 7, 9};
+		// queenOffsets would be same as kingOffsets, so we just use that
 		public static int[] kingOffsets = new int[] {-9, -8, -7, -1, 1, 7, 8, 9}; 
 		
 		// We don't have offsets for each colour as the logic is complicated
