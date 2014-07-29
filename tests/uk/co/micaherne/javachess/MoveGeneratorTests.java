@@ -59,7 +59,18 @@ public class MoveGeneratorTests {
 		Position position3 = Position.fromFEN("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
 		MoveGenerator moveGenerator3 = new MoveGenerator(position3);
 		int[] moves = moveGenerator3.generateMoves();
-		assertEquals(14, moves[0]);
+		for (int i = 1; i <= moves[0]; i++) {
+			System.out.println(notation.toString(moves[i]));
+		}
+		assertEquals(16, moves[0]); // 16 pseudolegal
+		int legal = 0;
+		for (int i = 1; i <= moves[0]; i++) {
+			if (position3.move(moves[i])) {
+				legal++;
+				position3.unmakeMove();
+			}
+		}
+		assertEquals(14, legal);
 	}
 	
 	@Test

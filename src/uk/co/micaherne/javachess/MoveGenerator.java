@@ -17,6 +17,8 @@ public class MoveGenerator {
 	public static final int[] ooFrom = {Chess.Square.E1, Chess.Square.E8};
 	public static final int[] ooTo = {Chess.Square.G1, Chess.Square.G8};
 	public static final int[] oooTo = {Chess.Square.C1, Chess.Square.C8};
+	public static final int[] ooRook = {Chess.Square.H1, Chess.Square.H8};
+	public static final int[] oooRook = {Chess.Square.A1, Chess.Square.A8};
 	public static final int[][] ooIntermediateSquares = {{Chess.Square.F1, Chess.Square.G1}, {Chess.Square.F8, Chess.Square.G8}};
 	public static final int[][] oooIntermediateSquares = {{Chess.Square.B1, Chess.Square.C1, Chess.Square.D1}, {Chess.Square.B8, Chess.Square.C8, Chess.Square.D8}};
 	public static final long[] bbOO = {0x0000000000000060L, 0x6000000000000000L};
@@ -244,22 +246,18 @@ public class MoveGenerator {
 			long captureNW = targets & ((~Chess.Bitboard.FILE_A & pawns) << 7);
 			while (captureNW != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(captureNW);
-				if (lowestBit >= 56) {
-					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NW, lowestBit, true, false);
-				} else {
-					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NW, lowestBit);
-				}
+				boolean isEpCapture = (1L << lowestBit == position.epSquare);
+				boolean isQueening = (lowestBit >= 56);
+				result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NW, lowestBit, isQueening, isEpCapture);
 				captureNW ^= (1L << lowestBit);
 			}
 			
 			long captureNE = targets & ((~Chess.Bitboard.FILE_H & pawns) << 9);
 			while (captureNE != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(captureNE);
-				if (lowestBit >= 56) {
-					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NE, lowestBit, true, false);
-				} else {
-					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NE, lowestBit);
-				}
+				boolean isEpCapture = (1L << lowestBit == position.epSquare);
+				boolean isQueening = (lowestBit >= 56);
+				result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NE, lowestBit, isQueening, isEpCapture);
 				captureNE ^= (1L << lowestBit);
 			}
 		} else {
@@ -267,25 +265,22 @@ public class MoveGenerator {
 			long captureSW = targets & ((~Chess.Bitboard.FILE_A & pawns) >>> 9);
 			while (captureSW != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(captureSW);
-				if (lowestBit < 8) {
-					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SW, lowestBit, true, false);
-				} else {
-					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SW, lowestBit);
-				}
+				boolean isEpCapture = (1L << lowestBit == position.epSquare);
+				boolean isQueening = (lowestBit < 8);
+				result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SW, lowestBit, isQueening, isEpCapture);
 				captureSW ^= (1L << lowestBit);
 			}
 			
 			long captureSE = targets & ((~Chess.Bitboard.FILE_H & pawns) >>> 7);
 			while (captureSE != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(captureSE);
-				if (lowestBit < 8) {
-					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SE, lowestBit, true, false);
-				} else {
-					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SE, lowestBit);
-				}
+				boolean isEpCapture = (1L << lowestBit == position.epSquare);
+				boolean isQueening = (lowestBit < 8);
+				result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SE, lowestBit, isQueening, isEpCapture);
 				captureSE ^= (1L << lowestBit);
 			}
 		}
+		
 		// Knight moves
 		long knights = position.pieceBitboards[Chess.Piece.KNIGHT] & position.colourBitboards[colourToMove];
 		while (knights != 0L) {

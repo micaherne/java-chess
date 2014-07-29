@@ -162,16 +162,41 @@ public class Position {
 		int fromSquare = MoveUtils.fromSquare(move);
 		int toSquare = MoveUtils.toSquare(move);
 
+		int sideMoving = whiteToMove ? Chess.Colour.WHITE : Chess.Colour.BLACK;
+
 		undo.movedPiece = board[fromSquare];
 		undo.capturedPiece = board[toSquare]; // Always want this even if empty
 		if (board[toSquare] != Chess.Piece.EMPTY) {
 			undo.isCapture = true;
 		}
 		
-		// TODO: This could be more restrictive
-		if ((board[fromSquare] & 7) == Chess.Piece.KING || (board[fromSquare] & 7) == Chess.Piece.ROOK) {
+		// Castling
+		if ((castling[sideMoving][0] || castling[sideMoving][1]) && ((board[fromSquare] & 7) == Chess.Piece.KING)) {
 			undo.affectsCastling = true;
 			undo.castling = castling;
+			castling[sideMoving][0] = false;
+			castling[sideMoving][1] = false;
+			
+			// Move rook
+			if (Math.abs(toSquare - fromSquare) == 2) {
+				if (toSquare == MoveGenerator.oooTo[sideMoving]) {
+					board[toSquare + 1] = board[MoveGenerator.oooRook[sideMoving]];
+					board[MoveGenerator.oooRook[sideMoving]] = Chess.Piece.EMPTY;
+				} else if (toSquare == MoveGenerator.ooTo[sideMoving]) {
+					board[toSquare - 1] = board[MoveGenerator.ooRook[sideMoving]];
+					board[MoveGenerator.ooRook[sideMoving]] = Chess.Piece.EMPTY;
+				}
+			}
+		}
+		if (castling[sideMoving][0] && ((board[fromSquare] & 7) == Chess.Piece.ROOK) && (fromSquare == MoveGenerator.oooRook[sideMoving])) {
+			undo.affectsCastling = true;
+			undo.castling = castling;
+			castling[sideMoving][0] = false;
+		}
+		if (castling[sideMoving][1] && ((board[fromSquare] & 7) == Chess.Piece.ROOK) && (fromSquare == MoveGenerator.ooRook[sideMoving])) {
+			undo.affectsCastling = true;
+			undo.castling = castling;
+			castling[sideMoving][1] = false;
 		}
 		
 		if (MoveUtils.isQueening(move)) {
@@ -179,10 +204,11 @@ public class Position {
 		} else {
 			board[toSquare] = board[fromSquare];
 		}
-		board[fromSquare] = Chess.Piece.EMPTY;
+		
+		// Do en passent captures
 		if (MoveUtils.isEnPassentCapture(move)) {
 			undo.isEnPassent = true;
-			undo.epSquare = epSquare;
+			// undo.epSquare = epSquare;
 			if (toSquare > fromSquare) {
 				board[toSquare -  8] = Chess.Piece.EMPTY;
 				undo.capturedPiece = Chess.Piece.White.PAWN;
@@ -192,9 +218,21 @@ public class Position {
 			}
 		}
 		
+		// Save the en passent square if necessary
+		if (epSquare != 0) {
+			undo.epSquare = epSquare;
+		}
+
+		if ((board[fromSquare] & 7) == Chess.Piece.PAWN && (Math.abs(toSquare - fromSquare) == 16)) {
+			epSquare = 1L << (fromSquare + ((toSquare - fromSquare) / 2));
+		} else {
+			epSquare = 0L;
+		}
+		
+		board[fromSquare] = Chess.Piece.EMPTY;
+		
 
 		undoData.push(undo);
-		int sideMoving = whiteToMove ? Chess.Colour.WHITE : Chess.Colour.BLACK;
 		whiteToMove = !whiteToMove;
 		
 		initialisePieceBitboards();
@@ -211,7 +249,7 @@ public class Position {
 	
 	public boolean inCheck(int side) {
 		int kingPosition = Long.numberOfTrailingZeros(pieceBitboards[Chess.Piece.KING] & colourBitboards[side]);
-		return moveGenerator.attacks(kingPosition, moveGenerator.oppositeColour(side));
+		return moveGenerator.attacks(kingPosition, MoveGenerator.oppositeColour(side));
 	}
 
 	public void unmakeMove() {
@@ -221,6 +259,7 @@ public class Position {
 		
 		board[fromSquare] = undo.movedPiece;
 		board[toSquare] = undo.capturedPiece;
+		epSquare = undo.epSquare;
 		
 		if (undo.affectsCastling) {
 			castling = undo.castling;

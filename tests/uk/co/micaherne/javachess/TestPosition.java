@@ -28,6 +28,64 @@ public class TestPosition {
 	}
 	
 	@Test
+	public void testEPMove() throws NotationException {
+		// EP square is cleared on moving / taking
+		Position position = Position.fromFEN("r4rk1/p1ppqpb1/bn2pnp1/3PN3/Pp2P3/2N2Q1p/1PP1BPPP/R1B1K2R b KQ a3 0 2");
+		assertEquals(1L << 16, position.epSquare);
+		int move = MoveUtils.create(25, 16);
+		position.move(move);
+		assertEquals(0L, position.epSquare);
+		
+		Position position1a = Position.fromFEN("r4rk1/p1ppqpb1/bn2pnp1/3PN3/Pp2P3/2N2Q1p/1PP1BPPP/R1B1K2R b KQ a3 0 2");
+		assertEquals(1L << 16, position1a.epSquare);
+		int move1a = MoveUtils.create(25, 17);
+		position1a.move(move1a);
+		assertEquals(0L, position1a.epSquare);
+		
+		// EP square is set on moving pawn 2 squares
+		Position position2 = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
+		int move2 = MoveUtils.create(8, 24);
+		position2.move(move2);
+		assertEquals(1L << 16, position2.epSquare);
+	}
+	
+	@Test
+	public void testUnmakeEP() throws NotationException {
+		// EP square is set on moving pawn 2 squares
+		Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
+		int move = MoveUtils.create(8, 24);
+		position.move(move);
+		assertEquals(1L << 16, position.epSquare);
+		
+		int[] board = position.board.clone();
+		
+		int move2 = MoveUtils.create(25, 17);
+		position.move(move2);
+		assertEquals(0L, position.epSquare);
+		
+		MoveUndo undoData = position.undoData.peek();
+		assertEquals(1L << 16, undoData.epSquare);
+		
+		position.unmakeMove();
+		assertEquals(1L << 16, position.epSquare);
+		
+		for (int i = 0; i < 64; i++) {
+			assertEquals(board[i], position.board[i]);
+		}
+		
+		Position position2 = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
+		MoveGenerator m = new MoveGenerator(position2);
+		int[] mBefore = m.generateMoves();
+		int move3 = MoveUtils.create(11, 2);
+		position2.move(move3);
+		// System.out.println(position2.toString());
+		position2.unmakeMove();
+		int[] mAfter = m.generateMoves();
+		// System.out.println(position2);
+		assertArrayEquals(mBefore, mAfter);
+	}
+	
+	@Test
 	public void testUnmakeMove() throws NotationException {
 		Position position = Position.fromFEN(Chess.START_POS_FEN);
 		int move = MoveUtils.create(Chess.Square.E2, Chess.Square.E4);
