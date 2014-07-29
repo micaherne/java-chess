@@ -50,18 +50,19 @@ public class MoveGeneratorTests {
 		for (int i = 1; i <= moves[0]; i++) {
 			System.out.println(notation.toString(moves[i]));
 		}
-		System.out.println(BitboardUtils.toString(moveGenerator2.bbRookAttacks[Chess.Square.A1]));
-		//assertEquals(48, moves[0]);
+		// System.out.println(BitboardUtils.toString(moveGenerator2.bbRookAttacks[Chess.Square.A1]));
+		assertEquals(48, moves[0]);
 	}
 	
 	@Test
 	public void testTemp() throws NotationException {
 		Position position2 = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
 		MoveGenerator moveGenerator2 = new MoveGenerator(position2);
-		assertTrue(moveGenerator2.attacks(Chess.Square.C3, Chess.Colour.BLACK));
+		System.out.println(BitboardUtils.toString(moveGenerator2.bishopAttacks(Chess.Square.F1)));
+		/* assertTrue(moveGenerator2.attacks(Chess.Square.C3, Chess.Colour.BLACK));
 		assertTrue(moveGenerator2.attacks(Chess.Square.C4, Chess.Colour.BLACK));
 		assertFalse(moveGenerator2.attacks(Chess.Square.B3, Chess.Colour.BLACK));
-		assertTrue(moveGenerator2.attacks(Chess.Square.H3, Chess.Colour.WHITE));
+		assertTrue(moveGenerator2.attacks(Chess.Square.H3, Chess.Colour.WHITE));*/
 		//System.out.println(BitboardUtils.toString(MoveGenerator.ooIntermediateSquares[Chess.Colour.WHITE][0]));
 		/*//System.out.println(BitboardUtils.toString(moveGenerator.bbKingAttacks[Chess.Square.A8]));
 		Position position2 = Position.fromFEN("3kQ3/8/8/8/8/8/8/8 b - -");
@@ -73,5 +74,13 @@ public class MoveGeneratorTests {
 		System.out.println("Time taken: " + (System.nanoTime() - start) + " nanoseconds");
 		//assertEquals(5, moves[0]);
 */	}
+	
+	@Test
+	public void testAttacks() throws NotationException {
+		Position position2 = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
+		MoveGenerator moveGenerator2 = new MoveGenerator(position2);
+		assertTrue(moveGenerator2.attacks(Chess.Square.D3, Chess.Colour.BLACK));
+		assertFalse(moveGenerator2.attacks(Chess.Square.F1, Chess.Colour.BLACK));
+	}
 
 }

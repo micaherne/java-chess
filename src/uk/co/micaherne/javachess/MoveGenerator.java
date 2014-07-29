@@ -451,21 +451,32 @@ public class MoveGenerator {
 	 * NB. There is no check that there *is* a bishop on the origin square. Calling code
 	 * must do this.
 	 * 
+	 * TODO: This uses a potentially flaky correspondence between the values of DirectionIndex 
+	 * and bishopOffsets, which should probably be improved.
+	 * 
 	 * @param origin
 	 * @return
 	 */
 	public long bishopAttacks(int origin) {
 		long result = 0L;
 		for (int i = 0; i < 4; i++) {
-			result |= bbRayAttacks[i][origin];
+			if (Chess.Bitboard.bishopOffsets[i] > 0) {
+				result |= positiveRayAttacks(i, origin);
+			} else {
+				result |= negativeRayAttacks(i, origin);
+			}
 		}
 		return result;
 	}
 	
 	public long rookAttacks(int origin) {
 		long result = 0L;
-		for (int i = 4; i < 8; i++) {
-			result |= bbRayAttacks[i][origin];
+		for (int i = 0; i < 4; i++) {
+			if (Chess.Bitboard.rookOffsets[i] > 0) {
+				result |= positiveRayAttacks(i + 4, origin);
+			} else {
+				result |= negativeRayAttacks(i + 4, origin);
+			}
 		}
 		return result;
 	}
