@@ -37,27 +37,25 @@ public class MoveGenerator {
 	
 	private void initialisePawnAttacks() {
 		for (int origin = 0; origin < 64; origin++) {
-			if (origin < 56) {
-				for (int j = 0; j < 2; j++) {
-					int square = origin + Chess.Bitboard.bishopOffsets[j];
-					
-					if ((Math.abs((square % 8) - (origin % 8)) == 1) 
-							&& (Math.abs((square / 8 - origin / 8)) == 1)
-							&& square > -1) {
-						bbPawnAttacks[Colour.BLACK][origin] |= (1L << square);
-					}
+			// We generate pawn attacks for squares on the first rank, even though
+			// these can't have pawns on them, as these are used in attacks()
+			for (int j = 0; j < 2; j++) {
+				int square = origin + Chess.Bitboard.bishopOffsets[j];
+				
+				if ((Math.abs((square % 8) - (origin % 8)) == 1) 
+						&& (Math.abs((square / 8 - origin / 8)) == 1)
+						&& square > -1) {
+					bbPawnAttacks[Colour.BLACK][origin] |= (1L << square);
 				}
 			}
-			
-			if (origin > 7) {
-				for (int j = 2; j < 4; j++) {
-					int square = origin + Chess.Bitboard.bishopOffsets[j];
-					
-					if ((Math.abs((square % 8) - (origin % 8)) == 1) 
-							&& (Math.abs((square / 8 - origin / 8)) == 1)
-							&& square < 64) {
-						bbPawnAttacks[Colour.WHITE][origin] |= (1L << square);
-					}
+
+			for (int j = 2; j < 4; j++) {
+				int square = origin + Chess.Bitboard.bishopOffsets[j];
+				
+				if ((Math.abs((square % 8) - (origin % 8)) == 1) 
+						&& (Math.abs((square / 8 - origin / 8)) == 1)
+						&& square < 64) {
+					bbPawnAttacks[Colour.WHITE][origin] |= (1L << square);
 				}
 			}
 		}

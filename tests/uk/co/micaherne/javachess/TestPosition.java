@@ -108,7 +108,6 @@ public class TestPosition {
 		MoveUndo undo = position.undoData.peek();
 		assertTrue(undo.castling[Chess.Colour.WHITE][0]);
 		assertTrue(undo.castling[Chess.Colour.WHITE][1]);
-		System.out.println(position);
 		position.unmakeMove();
 		assertTrue(position.castling[Chess.Colour.WHITE][0]);
 		assertTrue(position.castling[Chess.Colour.WHITE][1]);
@@ -130,7 +129,7 @@ public class TestPosition {
 	public void testInitialisePieceBitboards() throws NotationException {
 		Position position = Position.fromFEN(Chess.START_POS_FEN);
 		position.initialisePieceBitboards();
-		System.out.println(BitboardUtils.toString(position.pieceBitboards[Chess.Bitboard.OCCUPIED]));
+		// System.out.println(BitboardUtils.toString(position.pieceBitboards[Chess.Bitboard.OCCUPIED]));
 		assertEquals(2, Long.numberOfLeadingZeros(position.pieceBitboards[Chess.Piece.BISHOP]));
 	}
 
