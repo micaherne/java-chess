@@ -1,7 +1,12 @@
 package uk.co.micaherne.javachess.perft;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import uk.co.micaherne.javachess.MoveGenerator;
+import uk.co.micaherne.javachess.NotationException;
 import uk.co.micaherne.javachess.Position;
+import uk.co.micaherne.javachess.notation.LongAlgebraicNotation;
 
 public class Perft {
 
@@ -23,6 +28,21 @@ public class Perft {
 				PerftResult subPerft = perft(position, depth - 1);
 				position.unmakeMove();
 				result.moveCount += subPerft.moveCount;
+			}
+		}
+		return result;
+	}
+	
+	public static Map<String, Long> divide(Position position, int depth) throws NotationException {
+		LongAlgebraicNotation notation = new LongAlgebraicNotation();
+		HashMap<String, Long> result = new HashMap<String, Long>();
+		MoveGenerator moveGenerator = new MoveGenerator(position);
+		int[] moves = moveGenerator.generateMoves();
+		for (int i = 1; i <= moves[0]; i++) {
+			if (position.move(moves[i])) {
+				PerftResult subPerft = perft(position, depth - 1);
+				position.unmakeMove();
+				result.put(notation.toString(moves[i]), subPerft.moveCount);
 			}
 		}
 		return result;
