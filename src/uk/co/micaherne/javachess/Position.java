@@ -173,7 +173,7 @@ public class Position {
 		// Castling
 		if ((castling[sideMoving][0] || castling[sideMoving][1]) && ((board[fromSquare] & 7) == Chess.Piece.KING)) {
 			undo.affectsCastling = true;
-			undo.castling = castling;
+			undo.castling[sideMoving] = new boolean[] {castling[sideMoving][0], castling[sideMoving][1]};
 			castling[sideMoving][0] = false;
 			castling[sideMoving][1] = false;
 			
@@ -190,12 +190,12 @@ public class Position {
 		}
 		if (castling[sideMoving][0] && ((board[fromSquare] & 7) == Chess.Piece.ROOK) && (fromSquare == MoveGenerator.oooRook[sideMoving])) {
 			undo.affectsCastling = true;
-			undo.castling = castling;
+			undo.castling[sideMoving] = new boolean[] {castling[sideMoving][0], castling[sideMoving][1]};
 			castling[sideMoving][0] = false;
 		}
 		if (castling[sideMoving][1] && ((board[fromSquare] & 7) == Chess.Piece.ROOK) && (fromSquare == MoveGenerator.ooRook[sideMoving])) {
 			undo.affectsCastling = true;
-			undo.castling = castling;
+			undo.castling[sideMoving] = new boolean[] {castling[sideMoving][0], castling[sideMoving][1]};
 			castling[sideMoving][1] = false;
 		}
 		
@@ -257,12 +257,26 @@ public class Position {
 		int fromSquare = MoveUtils.fromSquare(undo.move);
 		int toSquare = MoveUtils.toSquare(undo.move);
 		
+		int sideThatMoved = whiteToMove ? Chess.Colour.BLACK : Chess.Colour.WHITE;
+		
 		board[fromSquare] = undo.movedPiece;
 		board[toSquare] = undo.capturedPiece;
 		epSquare = undo.epSquare;
 		
 		if (undo.affectsCastling) {
-			castling = undo.castling;
+			castling[sideThatMoved] = undo.castling[sideThatMoved];
+		}
+		
+		// Reset castled rook
+		if (((undo.movedPiece & 7) == Chess.Piece.KING) && (Math.abs(fromSquare - toSquare) == 2)) {
+			int rookSquare = fromSquare + ((toSquare - fromSquare) / 2);
+			int rook = board[rookSquare];
+			if (toSquare > fromSquare) {
+				board[rookSquare + 2] = rook;
+			} else {
+				board[rookSquare - 3] = rook;
+			}
+			board[rookSquare] = Chess.Piece.EMPTY;
 		}
 		
 		if (undo.isEnPassent) {

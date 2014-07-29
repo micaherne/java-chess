@@ -97,6 +97,25 @@ public class TestPosition {
 	}
 	
 	@Test
+	public void testMakeCastlingMove() throws NotationException {
+		Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
+		int move = MoveUtils.create(4, 6);
+		assertTrue(position.castling[Chess.Colour.WHITE][0]);
+		assertTrue(position.castling[Chess.Colour.WHITE][1]);
+		position.move(move);
+		assertFalse(position.castling[Chess.Colour.WHITE][0]);
+		assertFalse(position.castling[Chess.Colour.WHITE][1]);
+		MoveUndo undo = position.undoData.peek();
+		assertTrue(undo.castling[Chess.Colour.WHITE][0]);
+		assertTrue(undo.castling[Chess.Colour.WHITE][1]);
+		System.out.println(position);
+		position.unmakeMove();
+		assertTrue(position.castling[Chess.Colour.WHITE][0]);
+		assertTrue(position.castling[Chess.Colour.WHITE][1]);
+		
+	}
+	
+	@Test
 	public void testEP() throws NotationException {
 		Position position = Position.fromFEN("r1bqkbnr/ppp2ppp/2np4/4pP2/4P3/8/PPPP2PP/RNBQKBNR w - -");
 		int move = MoveUtils.create(Chess.Square.F5, Chess.Square.E6, false, true);

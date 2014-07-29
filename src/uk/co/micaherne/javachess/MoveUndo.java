@@ -10,7 +10,7 @@ public class MoveUndo {
 	public int movedPiece = 0;
 	public int capturedPiece = 0;
 	
-	public boolean castling[][];
+	public boolean[][] castling = new boolean[][]{{false, false}, {false, false}};
 	public long epSquare = 0;
 	
 	public MoveUndo(int move) {

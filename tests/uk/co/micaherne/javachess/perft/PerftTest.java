@@ -46,6 +46,10 @@ public class PerftTest {
 		Position position = Position.fromFEN("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
 		PerftResult p = Perft.perft(position, 1);
 		assertEquals(14, p.moveCount);
+		
+		position = Position.fromFEN("rnbqkbnr/pp2pppp/2p5/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 1");
+		p = Perft.perft(position, 1);
+		assertEquals(30, p.moveCount);
 	}
 	
 	@Test
