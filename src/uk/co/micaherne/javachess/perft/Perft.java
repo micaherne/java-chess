@@ -19,9 +19,11 @@ public class Perft {
 		}
 		int[] moves = moveGenerator.generateMoves();
 		for (int i = 1; i <= moves[0]; i++) {
-			position.move(moves[i]);
-			PerftResult subPerft = perft(position, depth - 1);
-			result.moveCount += subPerft.moveCount;
+			if (position.move(moves[i])) {
+				PerftResult subPerft = perft(position, depth - 1);
+				position.unmakeMove();
+				result.moveCount += subPerft.moveCount;
+			}
 		}
 		return result;
 	}

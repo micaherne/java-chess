@@ -21,10 +21,21 @@ public class TestPosition {
 		Position position = Position.fromFEN(Chess.START_POS_FEN);
 		int move = MoveUtils.create(Chess.Square.E2, Chess.Square.E4);
 		position.move(move);
-		// System.out.println(position);
+		assertFalse(position.whiteToMove);
 		int move2 = MoveUtils.create(Chess.Square.E7, Chess.Square.E5);
 		position.move(move2);
 		// System.out.println(position);
+	}
+	
+	@Test
+	public void testUnmakeMove() throws NotationException {
+		Position position = Position.fromFEN(Chess.START_POS_FEN);
+		int move = MoveUtils.create(Chess.Square.E2, Chess.Square.E4);
+		position.move(move);
+		position.unmakeMove();
+		assertEquals(Chess.Piece.White.PAWN, position.board[Chess.Square.E2]);
+		assertEquals(Chess.Piece.EMPTY, position.board[Chess.Square.E4]);
+		assertTrue(position.whiteToMove);
 	}
 	
 	@Test

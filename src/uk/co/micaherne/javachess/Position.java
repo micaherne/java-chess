@@ -1,11 +1,15 @@
 package uk.co.micaherne.javachess;
 
+import java.util.Stack;
+
 import uk.co.micaherne.javachess.notation.AlgebraicNotation;
 import uk.co.micaherne.javachess.notation.LongAlgebraicNotation;
 
 public class Position {
 	
-	
+	// TODO: This is bad - need to refactor to remove inCheck() dependency on
+	// MoveGenerator for attacks()
+	public MoveGenerator moveGenerator;
 	
 	public long[] pieceBitboards;
 	public long[] colourBitboards;
@@ -22,11 +26,21 @@ public class Position {
 	
 	public boolean whiteToMove = false;
 	
+	/**
+	 * The stack of undo data for the moves that have been made so far.
+	 * 
+	 * This would use less memory if we were to replace it with a set list of 
+	 * MoveUndo objects and a currentMove pointer. When making a move we would 
+	 * get the object for the currentMove+1 position, reset and re-use it.
+	 */
+	public Stack<MoveUndo> undoData = new Stack<MoveUndo>();
+	
 	public Position() {
 		board = new int[64];
 		pieceBitboards = new long[7];
 		colourBitboards = new long[2];
 		castling = new boolean[][]{{false, false}, {false, false}};
+		moveGenerator = new MoveGenerator(this);
 	}
 	
 	public void initialisePieceBitboards() {
@@ -137,10 +151,29 @@ public class Position {
 		return builder.toString();
 	}
 
-	public void move(int move) {
-		// TODO: Undo stack
+	/**
+	 * Make the given pseudolegal move.
+	 * 
+	 * @param move
+	 * @return true if move legal, false if not
+	 */
+	public boolean move(int move) {
+		MoveUndo undo = new MoveUndo(move);
 		int fromSquare = MoveUtils.fromSquare(move);
 		int toSquare = MoveUtils.toSquare(move);
+
+		undo.movedPiece = board[fromSquare];
+		undo.capturedPiece = board[toSquare]; // Always want this even if empty
+		if (board[toSquare] != Chess.Piece.EMPTY) {
+			undo.isCapture = true;
+		}
+		
+		// TODO: This could be more restrictive
+		if ((board[fromSquare] & 7) == Chess.Piece.KING || (board[fromSquare] & 7) == Chess.Piece.ROOK) {
+			undo.affectsCastling = true;
+			undo.castling = castling;
+		}
+		
 		if (MoveUtils.isQueening(move)) {
 			board[toSquare] = MoveUtils.promotedPiece(move);
 		} else {
@@ -148,12 +181,64 @@ public class Position {
 		}
 		board[fromSquare] = Chess.Piece.EMPTY;
 		if (MoveUtils.isEnPassentCapture(move)) {
+			undo.isEnPassent = true;
+			undo.epSquare = epSquare;
 			if (toSquare > fromSquare) {
 				board[toSquare -  8] = Chess.Piece.EMPTY;
+				undo.capturedPiece = Chess.Piece.White.PAWN;
 			} else {
 				board[toSquare + 8] = Chess.Piece.EMPTY;
+				undo.capturedPiece = Chess.Piece.Black.PAWN;
 			}
 		}
+		
+
+		undoData.push(undo);
+		int sideMoving = whiteToMove ? Chess.Colour.WHITE : Chess.Colour.BLACK;
+		whiteToMove = !whiteToMove;
+		
+		initialisePieceBitboards();
+		
+		if (inCheck(sideMoving)) {
+			unmakeMove();
+			return false;
+		}
+				
+		// TODO: Half-moves and moves
+		
+		return true;
+	}
+	
+	public boolean inCheck(int side) {
+		int kingPosition = Long.numberOfTrailingZeros(pieceBitboards[Chess.Piece.KING] & colourBitboards[side]);
+		return moveGenerator.attacks(kingPosition, moveGenerator.oppositeColour(side));
+	}
+
+	public void unmakeMove() {
+		MoveUndo undo = undoData.pop();
+		int fromSquare = MoveUtils.fromSquare(undo.move);
+		int toSquare = MoveUtils.toSquare(undo.move);
+		
+		board[fromSquare] = undo.movedPiece;
+		board[toSquare] = undo.capturedPiece;
+		
+		if (undo.affectsCastling) {
+			castling = undo.castling;
+		}
+		
+		if (undo.isEnPassent) {
+			if (toSquare > fromSquare) {
+				board[toSquare -  8] = undo.capturedPiece;
+			} else {
+				board[toSquare + 8] = undo.capturedPiece;
+			}
+		}
+		
+		whiteToMove = !whiteToMove;
+		
+		initialisePieceBitboards();
+		
+		// TODO: Half-moves and moves
 	}
 
 }
