@@ -195,6 +195,11 @@ public class Chess {
 		
 		public static final long[] files = new long[] {FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H};
 		public static final long[] ranks = new long[] {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8};
+		
+		public static final int[][] promotedPieces = new int[][] {
+			{Chess.Piece.White.QUEEN, Chess.Piece.White.ROOK, Chess.Piece.White.KNIGHT, Chess.Piece.White.BISHOP},
+			{Chess.Piece.Black.QUEEN, Chess.Piece.Black.ROOK, Chess.Piece.Black.KNIGHT, Chess.Piece.Black.BISHOP}
+		};
 	}
 	
 	public static enum NotationType {

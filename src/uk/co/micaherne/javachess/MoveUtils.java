@@ -34,6 +34,23 @@ public class MoveUtils {
 		return from << 8 | to | (2 << 24) | (promotedPiece << 16);
 	}
 	
+	/**
+	 * Add all the promotions for the given queening move to the moves array.
+	 *  
+	 * @param from
+	 * @param to
+	 * @param moves
+	 * @param side
+	 * @return the number of moves added (always 4)
+	 */
+	public static int addPromotions(int from, int to, int[] moves, int side) {
+		int baseMove = create(from, to, true, false);
+		for (int i = 0; i < Chess.Bitboard.promotedPieces[side].length; i++) {
+			moves[++moves[0]] = baseMove | (Chess.Bitboard.promotedPieces[side][i] << 16);
+		}
+		return Chess.Bitboard.promotedPieces[side].length;
+	}
+	
 	public static int fromSquare(long move) {
 		return (int) (255 & (move >>> 8));
 	}

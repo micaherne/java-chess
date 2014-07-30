@@ -36,5 +36,17 @@ public class TempTest {
 		System.out.println("Time taken: " + (tt3) + " nanoseconds");
 		System.out.println("Difference: " + (tt2 / tt1) * 100 + "%");
 	}
+	
+	@Test
+	public void test2() {
+		int[] test = new int[256];
+		test[0] = 1;
+		addToArray(test);
+		assertEquals(100, test[1]);
+	}
+	
+	public void addToArray(int[] test) {
+		test[1] = 100;
+	}
 
 }

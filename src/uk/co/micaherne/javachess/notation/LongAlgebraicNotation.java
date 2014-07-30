@@ -38,7 +38,7 @@ public class LongAlgebraicNotation extends AlgebraicNotation {
 			throw new NotationException("Unable to determine promoted piece");
 		}
 		if (isQueening) {
-			//result.append(fromPiece(promotedPiece));
+			result.append(fromPiece(promotedPiece));
 		}
 		return result.toString();
 	}

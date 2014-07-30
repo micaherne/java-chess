@@ -54,7 +54,8 @@ public class PerftTest {
 	
 	@Test
 	public void testDivide() throws NotationException {
-		Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq -");
+		// Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq -");
+		Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
 		Map<String, Long> divide = Perft.divide(position, 2);
 		long nodes = 0L;
 		for (String key : divide.keySet()) {
