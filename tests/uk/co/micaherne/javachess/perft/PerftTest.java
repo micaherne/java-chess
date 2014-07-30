@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.co.micaherne.javachess.Chess;
+import uk.co.micaherne.javachess.MoveUtils;
 import uk.co.micaherne.javachess.NotationException;
 import uk.co.micaherne.javachess.Position;
 
@@ -53,9 +54,19 @@ public class PerftTest {
 	}
 	
 	@Test
+	public void testWeirdPosition() throws NotationException {
+		// Position position = Position.fromFEN("4k3/2p5/b7/3P4/4P3/8/8/4K2R b K - 0 1");
+		Position position = Position.fromFEN("4k3/2p5/8/3P4/8/8/8/4K3 b - - 0 1");
+		Map<String, Long> divide1 = Perft.divide(position, 1);
+		Map<String, Long> divide2 = Perft.divide(position, 2);
+		assertEquals(divide1.size(), divide2.size());
+	}
+	
+	@Test
 	public void testDivide() throws NotationException {
 		// Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq -");
-		Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+		// Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R4RK1 b kq - 1 1");
+		Position position = Position.fromFEN("4k3/2p5/8/3P4/8/8/8/4K3 b - - 0 1");
 		Map<String, Long> divide = Perft.divide(position, 2);
 		long nodes = 0L;
 		for (String key : divide.keySet()) {
@@ -87,6 +98,23 @@ public class PerftTest {
 		
 		p = Perft.perft(position, 6);
 		assertEquals(3517770, p.moveCount);*/
+		
+	}
+	
+	@Test
+	public void testDivideAfterMove() throws NotationException {
+		Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+		position.move(MoveUtils.create(4, 6));
+		// position.move(MoveUtils.create(40, 49));
+		Map<String, Long> divide = Perft.divide(position, 2);
+		long nodes = 0L;
+		for (String key : divide.keySet()) {
+			Long moveCount = divide.get(key);
+			System.out.println(key + " " + moveCount);
+			nodes += moveCount;
+		}
+		System.out.println("Moves: " + divide.size());
+		System.out.println("Nodes: " + nodes);
 		
 	}
 

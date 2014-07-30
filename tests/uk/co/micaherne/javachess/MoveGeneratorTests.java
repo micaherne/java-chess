@@ -109,6 +109,10 @@ public class MoveGeneratorTests {
 		MoveGenerator moveGenerator4 = new MoveGenerator(position4);
 		assertTrue(moveGenerator4.attacks(Chess.Square.F1, Chess.Colour.BLACK));
 		
+		Position position5 = Position.fromFEN("4k3/2p5/8/3P4/8/8/8/4K3 b - - 0 1");
+		MoveGenerator moveGenerator5 = new MoveGenerator(position5);
+		assertFalse(moveGenerator5.attacks(Chess.Square.D7, Chess.Colour.WHITE));
+		
 	}
 
 }

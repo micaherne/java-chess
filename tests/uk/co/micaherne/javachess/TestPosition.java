@@ -97,6 +97,16 @@ public class TestPosition {
 	}
 	
 	@Test
+	public void testUnmakeMove2() throws NotationException {
+		Position position = Position.fromFEN("4k3/2p5/8/3P4/8/8/8/4K3 b - - 0 1");
+		assertTrue(position.move(MoveUtils.create(Chess.Square.C7, Chess.Square.C5)));
+		assertTrue(position.move(MoveUtils.create(Chess.Square.D5, Chess.Square.C6)));
+		position.unmakeMove();
+		position.unmakeMove();
+		assertEquals(0, position.board[Chess.Square.C6]);
+	}
+	
+	@Test
 	public void testMakeCastlingMove() throws NotationException {
 		Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
 		int move = MoveUtils.create(4, 6);
@@ -131,6 +141,13 @@ public class TestPosition {
 		position.initialisePieceBitboards();
 		// System.out.println(BitboardUtils.toString(position.pieceBitboards[Chess.Bitboard.OCCUPIED]));
 		assertEquals(2, Long.numberOfLeadingZeros(position.pieceBitboards[Chess.Piece.BISHOP]));
+	}
+	
+	@Test
+	public void testInCheck() throws NotationException {
+		Position position = Position.fromFEN("4k3/2p5/b7/3P4/8/8/8/4K3 b - - 0 1");
+		assertFalse(position.inCheck(Chess.Colour.BLACK));
+		
 	}
 
 }
