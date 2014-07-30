@@ -74,6 +74,15 @@ public class MoveGeneratorTests {
 	}
 	
 	@Test
+	public void testGenerateMoves4() throws NotationException {
+		Position position = Position.fromFEN("4k3/8/8/2pP4/8/8/8/4K3 w - c6 0 2");
+		assertEquals(1L << Chess.Square.C6, position.epSquare);
+		MoveGenerator moveGenerator = new MoveGenerator(position);
+		int[] moves = moveGenerator.generateMoves();
+		assertEquals(7, moves[0]);
+	}
+	
+	@Test
 	public void testTemp() throws NotationException {
 		Position position2 = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
 		MoveGenerator moveGenerator2 = new MoveGenerator(position2);

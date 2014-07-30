@@ -107,7 +107,7 @@ public class Position {
 			}
 		}
 		if (!"-".equals(fenParts[3])) {
-			result.epSquare = 1 << notation.toSquare(fenParts[3]);
+			result.epSquare = 1L << notation.toSquare(fenParts[3]);
 		}
 
 		if (fenParts.length > 4) {

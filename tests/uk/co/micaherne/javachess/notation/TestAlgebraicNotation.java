@@ -29,6 +29,8 @@ public class TestAlgebraicNotation {
 		assertEquals(Chess.Square.A1, square);
 		int square2 = notation.toSquare("h8");
 		assertEquals(Chess.Square.H8, square2);
+		int square3 = notation.toSquare("c6");
+		assertEquals(Chess.Square.C6, square3);
 	}
 	
 	@Test
