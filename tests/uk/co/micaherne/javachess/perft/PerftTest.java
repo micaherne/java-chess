@@ -26,8 +26,8 @@ public class PerftTest {
 		assertEquals(400, p2.moveCount);
 		PerftResult p3 = Perft.perft(position, 3);
 		assertEquals(8902, p3.moveCount);
-		PerftResult p4 = Perft.perft(position, 4);
-		assertEquals(197281, p4.moveCount);
+		// PerftResult p4 = Perft.perft(position, 4);
+		// assertEquals(197281, p4.moveCount);
 		// PerftResult p5 = Perft.perft(position, 5);
 		// assertEquals(4865609, p5.moveCount);
 	}
@@ -64,6 +64,29 @@ public class PerftTest {
 		}
 		System.out.println("Moves: " + divide.size());
 		System.out.println("Nodes: " + nodes);
+	}
+	
+	@Test
+	public void testPerft8() throws NotationException {
+		Position position = Position.fromFEN("r3k2r/8/8/8/8/8/8/4K3 w kq - 0 1");
+		PerftResult p = Perft.perft(position, 1);
+		assertEquals(5, p.moveCount);
+		
+		p = Perft.perft(position, 2);
+		assertEquals(130, p.moveCount);
+		
+		p = Perft.perft(position, 3);
+		assertEquals(782, p.moveCount);
+		
+		p = Perft.perft(position, 4);
+		assertEquals(22180, p.moveCount);
+		
+		/*p = Perft.perft(position, 5);
+		assertEquals(118882, p.moveCount);
+		
+		p = Perft.perft(position, 6);
+		assertEquals(3517770, p.moveCount);*/
+		
 	}
 
 }
