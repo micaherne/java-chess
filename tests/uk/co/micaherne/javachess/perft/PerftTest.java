@@ -40,6 +40,8 @@ public class PerftTest {
 		assertEquals(48, p.moveCount);
 		PerftResult p2 = Perft.perft(position, 2);
 		assertEquals(2039, p2.moveCount);
+		PerftResult p3 = Perft.perft(position, 3);
+		assertEquals(97862, p3.moveCount);
 	}
 	
 	@Test
