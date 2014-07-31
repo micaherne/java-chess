@@ -247,6 +247,7 @@ public class Position {
 		return true;
 	}
 	
+	// TODO: Fails if king not found (index out of bounds 64)
 	public boolean inCheck(int side) {
 		int kingPosition = Long.numberOfTrailingZeros(pieceBitboards[Chess.Piece.KING] & colourBitboards[side]);
 		return moveGenerator.attacks(kingPosition, MoveGenerator.oppositeColour(side));

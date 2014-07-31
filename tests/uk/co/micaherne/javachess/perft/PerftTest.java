@@ -53,6 +53,10 @@ public class PerftTest {
 		position = Position.fromFEN("rnbqkbnr/pp2pppp/2p5/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 1");
 		p = Perft.perft(position, 1);
 		assertEquals(30, p.moveCount);
+		
+		position = Position.fromFEN("4k3/8/8/2pP4/8/8/8/4K3 w - c6 0 2");
+		p = Perft.perft(position, 1);
+		assertEquals(7, p.moveCount);
 	}
 	
 	@Test
@@ -68,8 +72,8 @@ public class PerftTest {
 	public void testDivide() throws NotationException {
 		// Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq -");
 		// Position position = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R4RK1 b kq - 1 1");
-		Position position = Position.fromFEN("4k3/2p5/8/3P4/8/8/8/4K3 b - - 0 1");
-		Map<String, Long> divide = Perft.divide(position, 2);
+		Position position = Position.fromFEN("4k3/8/8/2pP4/8/8/8/4K3 w - c6 0 2");
+		Map<String, Long> divide = Perft.divide(position, 3);
 		long nodes = 0L;
 		for (String key : divide.keySet()) {
 			Long moveCount = divide.get(key);
