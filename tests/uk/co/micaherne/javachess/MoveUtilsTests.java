@@ -32,14 +32,16 @@ public class MoveUtilsTests {
 	
 	@Test
 	public void tempTest() {
-		int[] bim = new int[256];
+		/*int[] bim = new int[256];
 		bim[5] = 12345;
 		int[][] nim = new int[12][256];
 		nim[0] = bim;
 		System.out.println(nim[0][5]);
 		
 		long t = 1;
-		System.out.println((t << 63) >> 62);
+		System.out.println((t << 63) >> 62);*/
+		int move = MoveUtils.create(0, 0, 255);
+		System.out.println(Integer.toBinaryString(move));
 	}
 
 

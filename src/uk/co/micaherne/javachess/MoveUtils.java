@@ -25,13 +25,13 @@ public class MoveUtils {
 	}
 	
 	public static int create(int from, int to, boolean queening, boolean enPassentCapture) {
-		return from << 8 | to | (queening ? 2 << 24 : 0) | (enPassentCapture ? 2 << 25 : 0);
+		return from << 8 | to | (queening ? 1 << 24 : 0) | (enPassentCapture ? 1 << 25 : 0);
 	}
 	
 	public static int create(int from, int to, int promotedPiece) {
 		// If promotedPiece is provided, it's a promotion and therefore 
 		// also not an en passent capture
-		return from << 8 | to | (2 << 24) | (promotedPiece << 16);
+		return from << 8 | to | (1 << 24) | (promotedPiece << 16);
 	}
 	
 	/**
@@ -60,11 +60,11 @@ public class MoveUtils {
 	}
 	
 	public static boolean isQueening(long move) {
-		return ((move >>> 25) & 1) == 1;
+		return ((move >>> 24) & 1) == 1;
 	}
 	
 	public static boolean isEnPassentCapture(long move) {
-		return ((move >>> 26) & 1) == 1;
+		return ((move >>> 25) & 1) == 1;
 	}
 
 	public static int promotedPiece(long move) {

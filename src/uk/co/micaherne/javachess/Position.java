@@ -280,6 +280,7 @@ public class Position {
 		}
 		
 		if (undo.isEnPassent) {
+			board[toSquare] = Chess.Piece.EMPTY;
 			if (toSquare > fromSquare) {
 				board[toSquare -  8] = undo.capturedPiece;
 			} else {

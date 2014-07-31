@@ -18,10 +18,12 @@ import uk.co.micaherne.javachess.Position;
 public class PerftCompare {
 
 	public static void main(String[] args) throws IOException, NotationException {
-		int maxDepth = 5;
+		int maxDepth = 3;
 		FileReader fileReader = new FileReader("C:/dev/workspace/java-chess/roce39/perftsuite.epd");
 		BufferedReader reader = new BufferedReader(fileReader);
 		String line;
+		int passes = 0;
+		int fails = 0;
 		while ((line = reader.readLine()) != null) {
 			String[] parts = line.split(";");
 			if (parts.length < 3) {
@@ -38,13 +40,18 @@ public class PerftCompare {
 				Position position = Position.fromFEN(fen);
 				PerftResult result = Perft.perft(position, i);
 				if (perftResult == result.moveCount) {
+					passes++;
 					System.out.println("PASS: " + fen + ". Moves " + result.moveCount + ", depth " + i);
 				} else {
+					fails++;
 					System.out.println("FAIL: " + fen + ". Moves " + result.moveCount + ", depth " + i);
 					break;
 				}
 			}
 		}
+		
+		System.out.println("Passed: " + passes);
+		System.out.println("Failed: " + fails);
 	}
 
 }
