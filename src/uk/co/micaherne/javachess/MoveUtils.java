@@ -51,24 +51,24 @@ public class MoveUtils {
 		return Chess.Bitboard.promotedPieces[side].length;
 	}
 	
-	public static int fromSquare(long move) {
+	public static int fromSquare(int move) {
 		return (int) (255 & (move >>> 8));
 	}
 
-	public static int toSquare(long move) {
+	public static int toSquare(int move) {
 		return (int) (move & 255);
 	}
 	
-	public static boolean isQueening(long move) {
+	public static boolean isQueening(int move) {
 		return ((move >>> 24) & 1) == 1;
 	}
 	
-	public static boolean isEnPassentCapture(long move) {
+	public static boolean isEnPassentCapture(int move) {
 		return ((move >>> 25) & 1) == 1;
 	}
 
-	public static int promotedPiece(long move) {
-		return (int) ((move >>> 16) & 255);
+	public static int promotedPiece(int move) {
+		return (move >>> 16) & 255;
 	}
 	
 }
