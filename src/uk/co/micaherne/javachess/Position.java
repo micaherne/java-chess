@@ -211,10 +211,10 @@ public class Position {
 			// undo.epSquare = epSquare;
 			if (toSquare > fromSquare) {
 				board[toSquare -  8] = Chess.Piece.EMPTY;
-				undo.capturedPiece = Chess.Piece.White.PAWN;
+				undo.capturedPiece = Chess.Piece.Black.PAWN;
 			} else {
 				board[toSquare + 8] = Chess.Piece.EMPTY;
-				undo.capturedPiece = Chess.Piece.Black.PAWN;
+				undo.capturedPiece = Chess.Piece.White.PAWN;
 			}
 		}
 		
