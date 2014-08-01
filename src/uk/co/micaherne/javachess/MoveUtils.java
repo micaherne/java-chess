@@ -41,12 +41,13 @@ public class MoveUtils {
 	 * @param to
 	 * @param moves
 	 * @param side
+	 * @param moveCount TODO
 	 * @return the number of moves added (always 4)
 	 */
-	public static int addPromotions(int from, int to, int[] moves, int side) {
+	public static int addPromotions(int from, int to, int[] moves, int side, int moveCount) {
 		int baseMove = create(from, to, true, false);
 		for (int i = 0; i < Chess.Bitboard.promotedPieces[side].length; i++) {
-			moves[++moves[0]] = baseMove | (Chess.Bitboard.promotedPieces[side][i] << 16);
+			moves[++moveCount] = baseMove | (Chess.Bitboard.promotedPieces[side][i] << 16);
 		}
 		return Chess.Bitboard.promotedPieces[side].length;
 	}

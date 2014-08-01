@@ -196,7 +196,7 @@ public class MoveGenerator {
 			while (destinationSquares != 0L) {
 				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
 				if (lowestBit >= 56) {
-					moveCount += MoveUtils.addPromotions(lowestBit - Chess.Bitboard.DirectionOffset.N, lowestBit, result, colourToMove);
+					moveCount += MoveUtils.addPromotions(lowestBit - Chess.Bitboard.DirectionOffset.N, lowestBit, result, colourToMove, moveCount);
 				} else {
 					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.N, lowestBit);
 				}
@@ -221,7 +221,7 @@ public class MoveGenerator {
 			while (Long.bitCount(destinationSquares) != 0) {
 				int lowestBit = Long.numberOfTrailingZeros(destinationSquares);
 				if (lowestBit < 8) {
-					moveCount += MoveUtils.addPromotions(lowestBit + Chess.Bitboard.DirectionOffset.N, lowestBit, result, colourToMove);
+					moveCount += MoveUtils.addPromotions(lowestBit + Chess.Bitboard.DirectionOffset.N, lowestBit, result, colourToMove, moveCount);
 				} else {
 					result[++moveCount] = MoveUtils.create(lowestBit + Chess.Bitboard.DirectionOffset.N, lowestBit);
 				}
@@ -246,7 +246,7 @@ public class MoveGenerator {
 				int lowestBit = Long.numberOfTrailingZeros(captureNW);
 				boolean isEpCapture = (1L << lowestBit == position.epSquare);
 				if (lowestBit >= 56) {
-					moveCount += MoveUtils.addPromotions(lowestBit - Chess.Bitboard.DirectionOffset.NW, lowestBit, result, colourToMove);
+					moveCount += MoveUtils.addPromotions(lowestBit - Chess.Bitboard.DirectionOffset.NW, lowestBit, result, colourToMove, moveCount);
 				} else {
 					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NW, lowestBit, false, isEpCapture);
 				}
@@ -258,7 +258,7 @@ public class MoveGenerator {
 				int lowestBit = Long.numberOfTrailingZeros(captureNE);
 				boolean isEpCapture = (1L << lowestBit == position.epSquare);
 				if (lowestBit >= 56) {
-					moveCount += MoveUtils.addPromotions(lowestBit - Chess.Bitboard.DirectionOffset.NE, lowestBit, result, colourToMove);
+					moveCount += MoveUtils.addPromotions(lowestBit - Chess.Bitboard.DirectionOffset.NE, lowestBit, result, colourToMove, moveCount);
 				} else {
 					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.NE, lowestBit, false, isEpCapture);
 				}
@@ -271,7 +271,7 @@ public class MoveGenerator {
 				int lowestBit = Long.numberOfTrailingZeros(captureSW);
 				boolean isEpCapture = (1L << lowestBit == position.epSquare);
 				if (lowestBit < 8) {
-					moveCount += MoveUtils.addPromotions(lowestBit - Chess.Bitboard.DirectionOffset.SW, lowestBit, result, colourToMove);
+					moveCount += MoveUtils.addPromotions(lowestBit - Chess.Bitboard.DirectionOffset.SW, lowestBit, result, colourToMove, moveCount);
 				} else {
 					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SW, lowestBit, false, isEpCapture);
 				}
@@ -283,7 +283,7 @@ public class MoveGenerator {
 				int lowestBit = Long.numberOfTrailingZeros(captureSE);
 				boolean isEpCapture = (1L << lowestBit == position.epSquare);
 				if (lowestBit < 8) {
-					moveCount += MoveUtils.addPromotions(lowestBit - Chess.Bitboard.DirectionOffset.SE, lowestBit, result, colourToMove);
+					moveCount += MoveUtils.addPromotions(lowestBit - Chess.Bitboard.DirectionOffset.SE, lowestBit, result, colourToMove, moveCount);
 				} else {
 					result[++moveCount] = MoveUtils.create(lowestBit - Chess.Bitboard.DirectionOffset.SE, lowestBit, false, isEpCapture);
 				}
