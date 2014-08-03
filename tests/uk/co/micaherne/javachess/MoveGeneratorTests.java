@@ -83,6 +83,18 @@ public class MoveGeneratorTests {
 	}
 	
 	@Test
+	public void testGenerateMoves5() throws NotationException {
+		Position position5 = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/1B1PN3/1p2P3/P1N2Q2/1PPB1PpP/R3K2R b KQkq - 1 1");
+		assertFalse(position5.whiteToMove);
+		MoveGenerator moveGenerator5 = new MoveGenerator(position5);
+		// System.out.println(BitboardUtils.toString(position5.pieceBitboards[Chess.Piece.PAWN]));
+		int[] moves = moveGenerator5.generateMoves();
+		for (int i = 1; i <= moves[0]; i++) {
+			System.out.println(notation.toString(moves[i]));
+		}
+	}
+	
+	@Test
 	public void testTemp() throws NotationException {
 		Position position2 = Position.fromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
 		MoveGenerator moveGenerator2 = new MoveGenerator(position2);

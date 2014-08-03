@@ -25,6 +25,12 @@ public class TestPosition {
 		int move2 = MoveUtils.create(Chess.Square.E7, Chess.Square.E5);
 		position.move(move2);
 		// System.out.println(position);
+		
+		// Make sure taking a rook removes the right to castle
+		position = Position.fromFEN("r3k2r/p1ppqNb1/bn2pnp1/3P4/4P3/1pN2Q1p/PPPBBPPP/R3K2R w KQkq - 0 2");
+		move = MoveUtils.create(Chess.Square.F7, Chess.Square.H8);
+		position.move(move);
+		assertFalse(position.castling[Chess.Colour.BLACK][1]);
 	}
 	
 	@Test

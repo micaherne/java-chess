@@ -163,6 +163,7 @@ public class Position {
 		int toSquare = MoveUtils.toSquare(move);
 
 		int sideMoving = whiteToMove ? Chess.Colour.WHITE : Chess.Colour.BLACK;
+		int opposingSide = whiteToMove ? Chess.Colour.BLACK : Chess.Colour.WHITE;
 
 		undo.movedPiece = board[fromSquare];
 		undo.capturedPiece = board[toSquare]; // Always want this even if empty
@@ -172,7 +173,7 @@ public class Position {
 		
 		// Castling
 		if ((castling[sideMoving][0] || castling[sideMoving][1]) && ((board[fromSquare] & 7) == Chess.Piece.KING)) {
-			undo.affectsCastling = true;
+			undo.affectsCastling[sideMoving] = true;
 			undo.castling[sideMoving] = new boolean[] {castling[sideMoving][0], castling[sideMoving][1]};
 			castling[sideMoving][0] = false;
 			castling[sideMoving][1] = false;
@@ -189,14 +190,26 @@ public class Position {
 			}
 		}
 		if (castling[sideMoving][0] && ((board[fromSquare] & 7) == Chess.Piece.ROOK) && (fromSquare == MoveGenerator.oooRook[sideMoving])) {
-			undo.affectsCastling = true;
+			undo.affectsCastling[sideMoving] = true;
 			undo.castling[sideMoving] = new boolean[] {castling[sideMoving][0], castling[sideMoving][1]};
 			castling[sideMoving][0] = false;
 		}
 		if (castling[sideMoving][1] && ((board[fromSquare] & 7) == Chess.Piece.ROOK) && (fromSquare == MoveGenerator.ooRook[sideMoving])) {
-			undo.affectsCastling = true;
+			undo.affectsCastling[sideMoving] = true;
 			undo.castling[sideMoving] = new boolean[] {castling[sideMoving][0], castling[sideMoving][1]};
 			castling[sideMoving][1] = false;
+		}
+		
+		// Unset castling rights for rook captures
+		if (castling[opposingSide][0] && ((board[toSquare] & 7) == Chess.Piece.ROOK) && (toSquare == MoveGenerator.oooRook[opposingSide])) {
+			undo.affectsCastling[opposingSide] = true;
+			undo.castling[opposingSide] = new boolean[] {castling[opposingSide][0], castling[opposingSide][1]};
+			castling[opposingSide][0] = false;
+		}
+		if (castling[opposingSide][1] && ((board[toSquare] & 7) == Chess.Piece.ROOK) && (toSquare == MoveGenerator.ooRook[opposingSide])) {
+			undo.affectsCastling[opposingSide] = true;
+			undo.castling[opposingSide] = new boolean[] {castling[opposingSide][0], castling[opposingSide][1]};
+			castling[opposingSide][1] = false;
 		}
 		
 		if (MoveUtils.isQueening(move)) {
@@ -259,13 +272,18 @@ public class Position {
 		int toSquare = MoveUtils.toSquare(undo.move);
 		
 		int sideThatMoved = whiteToMove ? Chess.Colour.BLACK : Chess.Colour.WHITE;
+		int opposingSide = whiteToMove ? Chess.Colour.WHITE : Chess.Colour.WHITE;
 		
 		board[fromSquare] = undo.movedPiece;
 		board[toSquare] = undo.capturedPiece;
 		epSquare = undo.epSquare;
 		
-		if (undo.affectsCastling) {
-			castling[sideThatMoved] = undo.castling[sideThatMoved];
+		// Undo castling permissions. TODO: Could be for loop but is it worth it?
+		if (undo.affectsCastling[0]) {
+			castling[0] = undo.castling[0];
+		}
+		if (undo.affectsCastling[1]) {
+			castling[1] = undo.castling[1];
 		}
 		
 		// Reset castled rook

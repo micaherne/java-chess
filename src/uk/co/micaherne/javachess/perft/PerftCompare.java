@@ -18,7 +18,7 @@ import uk.co.micaherne.javachess.Position;
 public class PerftCompare {
 
 	public static void main(String[] args) throws IOException, NotationException {
-		int maxDepth = 3;
+		int maxDepth = 4;
 		FileReader fileReader = new FileReader("C:/dev/workspace/java-chess/roce39/perftsuite.epd");
 		BufferedReader reader = new BufferedReader(fileReader);
 		String line;
